@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Poppins";
+  src: url(./assets/fonts/Poppins-Medium.ttf);
+}
+
+* {
+  font-family: "Poppins";
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.title {
+  background: rgb(245, 64, 28);
+  background: linear-gradient(90deg, #f5401c 0%, #ffca18 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}

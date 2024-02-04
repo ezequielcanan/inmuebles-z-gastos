@@ -7,6 +7,11 @@
   src: url(./assets/fonts/Poppins-Medium.ttf);
 }
 
+@font-face {
+  font-family: "Ubuntu";
+  src: url(./assets/fonts/Ubuntu-Medium.ttf);
+}
+
 * {
   font-family: "Poppins";
   box-sizing: border-box;

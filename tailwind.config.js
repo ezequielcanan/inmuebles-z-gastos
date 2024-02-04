@@ -9,12 +9,16 @@ export default {
       colors: {
         primary: "#f5401c",
         secondary: "#ff9b18",
-        third: "#f0cd22",
+        third: "#ffd105",
         fourth: "#f96e1b",
+        fifth: "#fed7aa",
         success: "#149c0c",
         secondaryShade: "#aa8616",
         white: "#fff",
         textColor: "#000"
+      },
+      fontFamily: {
+        ubuntu: ["Ubuntu", "Arial"]
       }
     },
   },

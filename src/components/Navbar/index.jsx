@@ -32,7 +32,6 @@ const Navbar = ({ user, setUser }) => {
     }
   ]
 
-  console.log(nav, width)
   window.addEventListener("resize", e => setWidth(window.innerWidth))
 
   return (
@@ -55,7 +54,7 @@ const Navbar = ({ user, setUser }) => {
               </ul>
             </div>
           })}
-          <ul className="hidden md:flex xl:flex-col gap-x-[30px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
+          <ul className="hidden md:flex xl:flex-col gap-x-[10px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
             <li className={`xl:block w-full`}>
               <Link to={"/user"}>
                 <Button style="icon"><FaUser /></Button>
@@ -64,13 +63,15 @@ const Navbar = ({ user, setUser }) => {
             <li className={`xl:block w-full`}>
               <Button style="icon"><MdNotifications /></Button>
             </li>
+            {user ? <li className="xl:block w-full">
+              <Link to={"/"} className="hidden md:flex items-center">
+                <Button style="icon" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /></Button>
+              </Link>
+            </li> : null}
           </ul>
-          {user ? <Link to={"/"}>
-            <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>
-          </Link> : null}
         </div>
 
-        {<div className={`${(nav && window.innerWidth < 768) ? "!left-0 bg-black" : ""} px-5 py-7 duration-300 fixed top-[120px] left-[-100%] flex flex-col gap-y-[70px] h-screen w-screen`}>
+        {<div className={`${(nav && window.innerWidth < 768) ? "!left-0 bg-black" : ""} px-5 py-7 duration-300 fixed top-[100px] left-[-100%] flex flex-col gap-y-[70px] h-screen w-screen`}>
           {headerSections.map((section, i) => {
             return <div key={i} className="flex flex-col gap-y-[20px] justify-center xl:justify-start relative" onMouseLeave={() => setDropdown("")} onMouseEnter={() => window.innerWidth < 1280 && setDropdown(section.title)}>
               <h2 className="text-2xl px-4 py-2 flex items-center gap-x-[10px] text-secondary bg-transparent font-bold px-3">{section.title}</h2>
@@ -93,12 +94,14 @@ const Navbar = ({ user, setUser }) => {
             <li className={`xl:block w-full`}>
               <Button style="icon"><MdNotifications /></Button>
             </li>
+            {user ? <li className="pb-2">
+              <Link to={"/"}>
+                <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>
+              </Link>
+            </li> : null}
           </ul>
-          {user ? <Link to={"/"}>
-            <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>
-          </Link> : null}
         </div>}
-        <MdOutlineMenu className="text-white text-6xl md:hidden cursor-pointer" onClick={() => (console.log("ASDasd"), setNav(!nav))} />
+        <MdOutlineMenu className="text-white text-6xl md:hidden cursor-pointer" onClick={() => (setNav(!nav))} />
       </nav>
     </header>
   )

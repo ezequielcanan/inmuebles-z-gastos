@@ -5,23 +5,32 @@ import Home from "../pages/Home"
 import Navbar from "../components/Navbar"
 import Login from "../pages/Login"
 import Register from "../pages/Register"
+import Suppliers from "../pages/Suppliers"
+import NewSupplier from "../pages/NewSupplier"
+import Supplier from "../pages/Supplier"
 
 const Router = () => {
   const { getUser, setUser } = useContext(UserContext)
-  
+
 
   return (
     <HashRouter>
       <Navbar user={getUser()} setUser={setUser} />
       <Routes>
-        <Route path="/" element={<Home user={getUser()}/>} />
+        <Route path="/" element={<Home user={getUser()} />} />
         {!getUser() ? (
           <>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="*" element={<Navigate to={"/login"} />} />
           </>
-        ) : null}
+        ) : (
+          <>
+            <Route path="/suppliers" element={<Suppliers/>}/>
+            <Route path="/suppliers/:sid" element={<Supplier/>}/>
+            <Route path="/suppliers/new" element={<NewSupplier/>}/>
+          </>
+        )}
       </Routes>
     </HashRouter>
   )

@@ -11,6 +11,7 @@ export default {
         secondary: "#ff9b18",
         third: "#f0cd22",
         fourth: "#f96e1b",
+        success: "#149c0c",
         secondaryShade: "#aa8616",
         white: "#fff",
         textColor: "#000"

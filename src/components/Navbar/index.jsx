@@ -1,12 +1,14 @@
-import { NavLink } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import { MdAccountBalanceWallet, MdConstruction, MdNotifications, MdOutlineMenu } from "react-icons/md"
-import { IoIosNotifications } from "react-icons/io"
 import { FaHelmetSafety } from "react-icons/fa6"
 import { FaChevronDown, FaMoneyCheckAlt, FaTicketAlt, FaUser, FaUserAlt } from "react-icons/fa"
+import { LuLogOut } from "react-icons/lu"
 import { GiMoneyStack } from "react-icons/gi"
 import { useState } from "react"
+import CookiesJs from "js-cookie"
+import Button from "../Button"
 
-const Navbar = () => {
+const Navbar = ({ user, setUser }) => {
   const [dropdown, setDropdown] = useState("")
   const [width, setWidth] = useState(window.innerWidth)
   const [nav, setNav] = useState(false)
@@ -30,12 +32,15 @@ const Navbar = () => {
     }
   ]
 
+  console.log(nav, width)
   window.addEventListener("resize", e => setWidth(window.innerWidth))
 
   return (
-    <header className="fixed z-40 h-[120px] w-full xl:h-screen xl:w-[250px] bg-[#444]/60">
+    <header className="fixed z-40 h-[120px] w-full xl:h-screen xl:w-[250px] bg-[#111]">
       <nav className="w-full px-5 py-5 flex justify-between h-full items-center xl:flex-col xl:gap-y-[40px] xl:justify-center xl:h-auto">
-        <img src="logo.svg" alt="" className="py-4 w-[200px] xl:w-auto" />
+        <Link to={"/"} onClick={() => setNav(false)}>
+          <img src="logo.svg" alt="" className="py-4 w-[200px] xl:w-auto" />
+        </Link>
         <div className="md:flex md:gap-x-[20px] xl:flex-col xl:gap-y-[30px]">
           {headerSections.map((section, i) => {
             return <div key={i} className="hidden md:flex flex-col gap-y-[20px] justify-center xl:justify-start relative" onMouseLeave={() => setDropdown("")} onMouseEnter={() => width < 1280 && setDropdown(section.title)}>
@@ -44,7 +49,7 @@ const Navbar = () => {
                 {section.data.map((button, i) => {
                   const Logo = button.logo
                   return <li className={`${dropdown != section.title ? "hidden" : "block w-full h-full bg-secondary text-black hover:bg-black hover:text-secondary"} xl:block w-full`} key={i}>
-                    <NavLink to={button.to} className={({ isActive }) => `duration-500 py-3 px-3 flex w-full gap-x-[20px] items-center ${isActive ? "bg-secondary text-textColor" : ""}`}><Logo /> {button.text}</NavLink>
+                    <NavLink to={button.to} className={({ isActive }) => `duration-500 py-3 px-3 flex w-full gap-x-[20px] items-center ${isActive ? "bg-secondary text-textColor" : ""}`} onClick={() => setNav(false)}><Logo /> {button.text}</NavLink>
                   </li>
                 })}
               </ul>
@@ -52,15 +57,20 @@ const Navbar = () => {
           })}
           <ul className="hidden md:flex xl:flex-col gap-x-[30px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
             <li className={`xl:block w-full`}>
-              <NavLink to={"/"} className={({ isActive }) => `duration-500 py-3 px-3 flex w-[50px] rounded-full gap-x-[20px] items-center justify-between bg-secondary text-textColor`}><FaUser /></NavLink>
+              <Link to={"/user"}>
+                <Button style="icon"><FaUser /></Button>
+              </Link>
             </li>
             <li className={`xl:block w-full`}>
-              <NavLink to={"/"} className={`duration-500 py-3 px-3 flex w-[50px] gap-x-[20px] rounded-full items-center justify-between bg-secondary text-textColor`}><MdNotifications /></NavLink>
+              <Button style="icon"><MdNotifications /></Button>
             </li>
           </ul>
+          {user ? <Link to={"/"}>
+            <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>
+          </Link> : null}
         </div>
 
-        {<div className={`${(nav && window.innerWidth < 768) ? "left-0 bg-black" : ""} px-5 py-7 duration-300 fixed top-[120px] left-[-100%] flex flex-col gap-y-[70px] h-screen w-screen`}>
+        {<div className={`${(nav && window.innerWidth < 768) ? "!left-0 bg-black" : ""} px-5 py-7 duration-300 fixed top-[120px] left-[-100%] flex flex-col gap-y-[70px] h-screen w-screen`}>
           {headerSections.map((section, i) => {
             return <div key={i} className="flex flex-col gap-y-[20px] justify-center xl:justify-start relative" onMouseLeave={() => setDropdown("")} onMouseEnter={() => window.innerWidth < 1280 && setDropdown(section.title)}>
               <h2 className="text-2xl px-4 py-2 flex items-center gap-x-[10px] text-secondary bg-transparent font-bold px-3">{section.title}</h2>
@@ -68,7 +78,7 @@ const Navbar = () => {
                 {section.data.map((button, i) => {
                   const Logo = button.logo
                   return <li className={`xl:block w-full`} key={i}>
-                    <NavLink to={button.to} className={({ isActive }) => `duration-500 py-3 px-3 flex w-full gap-x-[20px] items-center ${isActive ? "bg-secondary text-textColor" : ""}`}><Logo /> {button.text}</NavLink>
+                    <NavLink to={button.to} className={({ isActive }) => `duration-500 py-3 px-3 flex w-full gap-x-[20px] items-center ${isActive ? "bg-secondary text-textColor" : ""}`} onClick={() => setNav(false)}><Logo /> {button.text}</NavLink>
                   </li>
                 })}
               </ul>
@@ -76,14 +86,19 @@ const Navbar = () => {
           })}
           <ul className="flex flex-col gap-x-[30px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
             <li className={`xl:block w-full`}>
-              <NavLink to={"/"} className={({ isActive }) => `duration-500 py-3 px-3 flex w-[50px] rounded-full gap-x-[20px] items-center justify-between ${isActive ? "bg-secondary text-textColor" : ""}`}><FaUser /></NavLink>
+              <Link to={"/user"}>
+                <Button style="icon"><FaUser /></Button>
+              </Link>
             </li>
             <li className={`xl:block w-full`}>
-              <NavLink to={"/"} className={`duration-500 py-3 px-3 flex w-[50px] gap-x-[20px] rounded-full items-center justify-between bg-secondary text-textColor`}><MdNotifications /></NavLink>
+              <Button style="icon"><MdNotifications /></Button>
             </li>
           </ul>
+          {user ? <Link to={"/"}>
+            <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>
+          </Link> : null}
         </div>}
-        <MdOutlineMenu className="text-white text-6xl md:hidden" onClick={() => setNav(!nav)} />
+        <MdOutlineMenu className="text-white text-6xl md:hidden cursor-pointer" onClick={() => (console.log("ASDasd"), setNav(!nav))} />
       </nav>
     </header>
   )

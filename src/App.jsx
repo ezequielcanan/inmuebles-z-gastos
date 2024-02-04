@@ -1,9 +1,11 @@
 import Router from "./Router/router"
+import { UserContextProvider } from "./context/userContext"
 
 const App = () => {
-
   return (
-    <Router />
+    <UserContextProvider>
+      <Router />
+    </UserContextProvider>
   )
 }
 

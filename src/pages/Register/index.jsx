@@ -27,7 +27,7 @@ const Register = () => {
     }
   })
   return (
-    <Main className={"bg-gradient-to-tr from-stone-400 to-orange-300 w-screen h-screen grid items-center justify-items-center"}>
+    <Main className={"bg-gradient-to-tr from-stone-400 to-orange-300 py-[100px] !overflow-x-hidden grid items-center justify-items-center"}>
       <div className="bg-secondary flex flex-col gap-y-[100px] items-center w-auto py-3 px-3 md:py-7 md:px-7">
         <FaUserCircle className="text-white text-[100px] md:text-[180px]" />
         <Form className={"gap-y-[70px]"} onSubmit={onSubmit}>

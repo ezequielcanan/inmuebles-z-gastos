@@ -27,7 +27,7 @@ const Login = () => {
     }
   })
   return (
-    <Main className={"bg-gradient-to-tr from-stone-400 to-orange-300 grid items-center justify-items-center overflow-hidden px-[10px]"}>
+    <Main className={"bg-gradient-to-tr from-stone-400 to-orange-300 grid items-center justify-items-center overflow-hidden !py-[200px] px-[10px]"}>
       <div className="bg-secondary flex flex-col gap-y-[100px] items-center w-auto py-3 px-3 md:py-7 md:px-7">
         <FaUserCircle className="text-white text-[100px] md:text-[180px]" />
         <Form className={"gap-y-[70px] w-full"} onSubmit={onSubmit}>

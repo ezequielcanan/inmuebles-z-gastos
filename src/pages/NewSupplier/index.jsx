@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { FaHelmetSafety } from "react-icons/fa6"
 import { useForm } from "react-hook-form"
 import Label from "../../components/Label/index.jsx"
+import Section from "../../containers/Section/index.jsx"
 
 const NewSupplier = () => {
   const { register, handleSubmit } = useForm()
@@ -24,11 +25,11 @@ const NewSupplier = () => {
     }
   })
 
-  return <Main className={"grid items-center justify-center gap-y-[30px] py-[30px] px-[10px] pt-[150px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"} >
+  return <Main className={"grid items-center justify-center gap-y-[30px]"} paddings>
     <section>
       <Title className="text-center">Nuevo proveedor</Title>
     </section>
-    <section className="bg-secondary flex flex-col items-center gap-y-[70px] p-3 md:p-7 text-white">
+    <Section style="form">
       <FaHelmetSafety className="text-[100px] md:text-[180px]" />
       <Form className={""} onSubmit={onSubmit}>
         <Input register={{ ...register("name") }}>
@@ -51,7 +52,7 @@ const NewSupplier = () => {
         </Input>
         <Button className="text-black" type="submit" style="submit">Añadir</Button>
       </Form>
-    </section>
+    </Section>
   </Main>
 }
 

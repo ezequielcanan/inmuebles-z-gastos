@@ -19,9 +19,9 @@ const Projects = () => {
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <section>
-        <Title>Proyectos</Title>
+        <Title className={"text-center xl:text-start"}>Proyectos</Title>
       </section>
-      <section className="flex">
+      <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
         {projects.length ? (
           projects.map((project,i) => {
             console.log(project)

@@ -7,6 +7,7 @@ import customAxios from "../../config/axios.config.js"
 import { useNavigate } from "react-router-dom"
 import { FaHelmetSafety } from "react-icons/fa6"
 import { useForm } from "react-hook-form"
+import Label from "../../components/Label/index.jsx"
 
 const NewSupplier = () => {
   const { register, handleSubmit } = useForm()
@@ -29,24 +30,24 @@ const NewSupplier = () => {
     </section>
     <section className="bg-secondary flex flex-col items-center gap-y-[70px] p-3 md:p-7 text-white">
       <FaHelmetSafety className="text-[100px] md:text-[180px]" />
-      <Form className={"w-full"} onSubmit={onSubmit}>
+      <Form className={""} onSubmit={onSubmit}>
         <Input register={{ ...register("name") }}>
-          <label htmlFor="name" className="text-xl md:text-4xl font-ubuntu">Razon Social:</label>
+          <Label name="name" text={"Razon social:"}/>
         </Input>
         <Input register={{ ...register("cuit") }}>
-          <label htmlFor="cuit" className="text-xl md:text-4xl font-ubuntu">CUIT:</label>
+          <Label name="cuit" text={"CUIT:"}/>
         </Input>
         <Input register={{ ...register("email") }}>
-          <label htmlFor="email" className="text-xl md:text-4xl font-ubuntu">Email:</label>
+          <Label name={"email"} text={"Email:"}/>
         </Input>
         <Input register={{ ...register("phone") }}>
-          <label htmlFor="phone" className="text-xl md:text-4xl font-ubuntu">Telefono:</label>
+          <Label name={"phone"} text={"Telefono:"}/>
         </Input>
         <Input register={{ ...register("address") }}>
-          <label htmlFor="address" className="text-xl md:text-4xl font-ubuntu">Direccion:</label>
+          <Label name={"address"} text={"Direccion:"}/>
         </Input>
         <Input register={{ ...register("referrer") }}>
-          <label htmlFor="referrer" className="text-xl md:text-4xl font-ubuntu">Referente:</label>
+          <Label name={"referrer"} text={"Referente:"}/>
         </Input>
         <Button className="text-black" type="submit" style="submit">Añadir</Button>
       </Form>

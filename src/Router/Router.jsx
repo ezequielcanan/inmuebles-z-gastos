@@ -8,6 +8,9 @@ import Register from "../pages/Register"
 import Suppliers from "../pages/Suppliers"
 import NewSupplier from "../pages/NewSupplier"
 import Supplier from "../pages/Supplier"
+import Projects from "../pages/Projects"
+import Budgets from "../pages/Budgets"
+import NewBudget from "../pages/NewBudget"
 
 const Router = () => {
   const { getUser, setUser } = useContext(UserContext)
@@ -29,6 +32,9 @@ const Router = () => {
             <Route path="/suppliers" element={<Suppliers/>}/>
             <Route path="/suppliers/:sid" element={<Supplier/>}/>
             <Route path="/suppliers/new" element={<NewSupplier/>}/>
+            <Route path="/projects" element={<Projects/>}/>
+            <Route path="/budgets" element={<Budgets/>}/>
+            <Route path="/budgets/new" element={<NewBudget/>}/>
           </>
         )}
       </Routes>

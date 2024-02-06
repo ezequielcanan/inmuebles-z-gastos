@@ -1,4 +1,4 @@
-import { GiMoneyStack } from "react-icons/gi"
+import { CiViewTable } from "react-icons/ci"
 import { useNavigate } from "react-router-dom"
 import Form from "../../components/Form"
 import Input from "../../components/FormInput/Input"
@@ -20,6 +20,7 @@ const NewBudget = () => {
   const [projects, setProjects] = useState(false)
   const [suppliers, setSuppliers] = useState(false)
   const [file, setFile] = useState(false)
+  const [paymentType, setPaymentType] = useState("quotas")
   const [paidApartments, setPaidApartments] = useState([])
   const navigate = useNavigate()
 
@@ -45,14 +46,14 @@ const NewBudget = () => {
 
   const onSubmit = handleSubmit(async data => {
     data.paidApartments = paidApartments
-    const result = (await customAxios.post("/budget", data, {headers: {"Content-Type": "application/json"}})).data
-    
+    const result = (await customAxios.post("/budget", data, { headers: { "Content-Type": "application/json" } })).data
+
     data.folder = `projects/${result?.payload?.project}/budgets/${result?.payload?._id}`
     const formData = new FormData()
     formData.append("data", JSON.stringify(data))
     formData.append("file", file)
 
-    const fileResult = (await customAxios.post("/budget/file", formData, {headers: {"Content-Type": "multipart/form-data"}})).data
+    const fileResult = (await customAxios.post("/budget/file", formData, { headers: { "Content-Type": "multipart/form-data" } })).data
     navigate("/budgets")
   })
 
@@ -75,7 +76,7 @@ const NewBudget = () => {
     updateObject[property] = newValue
     paidApartments[updateIndex] = { ...paidApartments[updateIndex], ...updateObject }
     setPaidApartments([...paidApartments])
-  } 
+  }
 
   const onChangeApartment = async (aid, id) => {
     const updateIndex = getPaidApartmentIndex(id)
@@ -88,7 +89,7 @@ const NewBudget = () => {
       try {
         const apartments = (await customAxios.get(`/apartments/project/${pid}`))?.data?.payload
         const updateIndex = getPaidApartmentIndex(id)
-        paidApartments[updateIndex] = {...paidApartments[updateIndex], project: pid, id, apartment: apartments[0]?._id, apartments: mapApartments(apartments) }
+        paidApartments[updateIndex] = { ...paidApartments[updateIndex], project: pid, id, apartment: apartments[0]?._id, apartments: mapApartments(apartments) }
         setPaidApartments([...paidApartments])
       }
       catch (e) {
@@ -125,18 +126,23 @@ const NewBudget = () => {
       <Section style="form">
         {(projects && suppliers) ? (
           <>
-            <GiMoneyStack className="text-[100px] md:text-[180px]" />
+            <CiViewTable className="text-[100px] md:text-[180px]" />
             <Form className={"grid 2xl:grid-cols-2 gap-8"} onSubmit={onSubmit}>
               <div className="flex flex-col gap-y-[20px]">
-                <SelectInput options={projects} register={{...register("project")}}>
+                <SelectInput options={projects} register={{ ...register("project") }}>
                   <Label name={"project"} text={"Proyecto:"} />
                 </SelectInput>
                 <SelectInput options={suppliers} register={{ ...register("supplier") }}>
                   <Label name={"supplier"} text={"Proveedor:"} />
                 </SelectInput>
-                <SelectInput options={[{ value: "quotas", text: "En cuotas" }, { value: "advance", text: "Por avance" }]} register={{ ...register("paymentType") }}>
+                <SelectInput options={[{ value: "quotas", text: "En cuotas" }, { value: "advance", text: "Por avance" }]} register={{ ...register("paymentType") }} onChange={(e) => setPaymentType(e.currentTarget?.value)}>
                   <Label name={"paymentType"} text={"Tipo de pago:"} />
                 </SelectInput>
+                {paymentType == "quotas" ? (
+                  <Input register={{ ...register("quotas") }} type="number" className={"md:!w-[300px]"}>
+                    <Label name={"quotas"} text={"Cuotas:"} />
+                  </Input>
+                ) : null}
                 <Input register={{ ...register("total") }} type="number" className={"md:!w-[300px]"}>
                   <Label name={"total"} text={"TOTAL $:"} />
                 </Input>
@@ -149,10 +155,10 @@ const NewBudget = () => {
                 <Input register={{ ...register("date") }} type="date" className={"!w-full"}>
                   <Label name={"date"} text={"Fecha de presupuesto:"} />
                 </Input>
-                <Input type="file" className={"hidden"} register={{...register("file")}} id="file" onChange={(e) => setFile(e.target.files[0])}>
+                <Input type="file" className={"hidden"} register={{ ...register("file") }} id="file" onChange={(e) => setFile(e.target.files[0])}>
                   <p className="font-ubuntu md:text-4xl">Documento</p>
                   <Label name={"file"} className={"py-4 px-4 flex w-full justify-end cursor-pointer text-center"}>
-                    {!file ? <FaFileArrowUp/> : <p className="py-3 px-3 max-w-[200px] overflow-hidden bg-primary">{file.name}</p>}
+                    {!file ? <FaFileArrowUp /> : <p className="py-3 px-3 max-w-[200px] overflow-hidden bg-primary">{file.name}</p>}
                   </Label>
                 </Input>
               </div>
@@ -174,7 +180,7 @@ const NewBudget = () => {
                         <Button style="icon" type="button" onClick={() => deleteApartment(apartment.id)} className={"!bg-red-500 h-[50px]"}>
                           <RiSubtractFill size={100} />
                         </Button>
-                        <SelectInput options={[{value: "quota", text: "Por cuota"}, {value: "total", text: "Al total"}]} className={"w-full"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value, apartment?.id)} />
+                        <SelectInput options={[{ value: "quota", text: "Por cuota" }, { value: "total", text: "Al total" }]} className={"w-full"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value, apartment?.id)} />
                         <SelectInput options={apartment?.apartments} className={"w-full"} onChange={(e) => onChangeApartment(e?.currentTarget?.value, apartment?.id)} />
                         <SelectInput options={projects} className={"w-full"} onChange={(e) => onChangeProject(e?.currentTarget?.value, apartment?.id)} />
                       </div>

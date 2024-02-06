@@ -24,7 +24,6 @@ const Projects = () => {
       <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
         {projects.length ? (
           projects.map((project,i) => {
-            console.log(project)
             return <ProjectCard thumbnail={project.thumbnail} title={project.title} key={i}/>
           })
         ) : (

@@ -42,6 +42,12 @@ const Payment = () => {
     setReloadFlag(!reloadFlag)
     setFile(false)
   })
+  
+  const getLastSubpaymentTotal = (type) => {
+    const subPayment = payment[type]?.payments[payment[type]?.payments.length - 1]
+    const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, subPayment.cashPaid.total)
+    return total || 0
+  }
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
@@ -59,7 +65,7 @@ const Payment = () => {
               </div>
               <div className="flex flex-col gap-y-[10px]">
                 <div className="flex w-full gap-8 justify-between items-center">
-                  <p className="text-xl">Último adelanto: {payment?.white?.payments[payment?.white?.payments.length - 1]?.checks?.length || "No hay adelantos"}</p>
+                  <p className="text-xl">Último adelanto: {getLastSubpaymentTotal("white") ? "$"+getLastSubpaymentTotal("white") : "No hay adelantos"}</p>
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
                     <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
                       Agregar adelanto
@@ -98,7 +104,7 @@ const Payment = () => {
                 <Subtitle>Seccion B</Subtitle>
               </div>
               <div>
-                <p className="text-xl">Último adelanto: {payment?.white?.payments[payment?.white?.payments.length - 1]?.checks?.length || "No hay adelantos"}</p>
+                <p className="text-xl">Último adelanto: {payment?.black?.payments[payment?.black?.payments.length - 1]?.checks?.length || "No hay adelantos"}</p>
               </div>
             </div>
 

@@ -49,7 +49,7 @@ const Budget = () => {
               <p className="text-3xl bg-secondary py-3 px-3">Total: {formatNumber(budget?.total)}</p>
               <p className="text-3xl bg-secondary py-3 px-3">Pagado: {formatNumber(budget?.advanced)}</p>
               <p className="text-3xl bg-secondary py-3 px-3">Restante: {formatNumber(budget?.total - budget?.advanced)}</p>
-              <p className="text-3xl bg-secondary py-3 px-3">Adelanto: {formatNumber(budget?.booking)}</p>
+              <p className="text-3xl bg-secondary py-3 px-3">Adelanto: {formatNumber(budget?.booking || 0)}</p>
               <p className="text-3xl bg-secondary py-3 px-3">Total en USD: {formatNumber(budget?.total / budget?.dollarPrice)}</p>
               <p className="text-3xl bg-secondary py-3 px-3">{budget?.paymentType == "quotas" ? `En ${budget?.quotas} cuotas` : "Por avance"}</p>
               <p className="text-3xl bg-secondary py-3 px-3">Indice base: {formatNumber(budget?.baseIndex)}</p>
@@ -77,7 +77,7 @@ const Budget = () => {
             <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
             <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
               {payments?.map((payment,i) => {
-                return <PaymentCard payment={payment} key={i} />
+                return <PaymentCard payment={payment} nextPayment={payments[i + 1]} budget={budget} key={i} />
               })}
             </div>
           </section>

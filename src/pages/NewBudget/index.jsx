@@ -102,7 +102,7 @@ const NewBudget = () => {
     if (projects) {
       try {
         const apartments = (await customAxios.get(`/apartments/project/${projects[0]?.value}`))?.data?.payload
-        setPaidApartments([...paidApartments, { id: paidApartments.length + 1, project: projects[0]?.value, apartment: apartments[0]?._id, apartments: mapApartments(apartments), dollar: 0, total: 0, subtractType: "quota" }])
+        setPaidApartments([...paidApartments, { id: (paidApartments[paidApartments.length - 1]?.id + 1) || 1, project: projects[0]?.value, apartment: apartments[0]?._id, apartments: mapApartments(apartments), dollar: 0, total: 0, subtractType: "quota" }])
       }
       catch (e) {
         console.log(e)
@@ -115,6 +115,8 @@ const NewBudget = () => {
     paidApartments.splice(deleteIndex, 1)
     setPaidApartments([...paidApartments])
   }
+
+  console.log(paidApartments)
 
   return (
     <Main className={"grid items-center justify-center py-[40px] gap-y-[30px]"} paddings>
@@ -180,13 +182,13 @@ const NewBudget = () => {
                         <Button style="icon" type="button" onClick={() => deleteApartment(apartment.id)} className={"!bg-red-500 h-[50px]"}>
                           <RiSubtractFill size={100} />
                         </Button>
-                        <SelectInput options={[{ value: "quota", text: "Por cuota" }, { value: "total", text: "Al total" }]} className={"w-full"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value, apartment?.id)} />
-                        <SelectInput options={apartment?.apartments} className={"w-full"} onChange={(e) => onChangeApartment(e?.currentTarget?.value, apartment?.id)} />
-                        <SelectInput options={projects} className={"w-full"} onChange={(e) => onChangeProject(e?.currentTarget?.value, apartment?.id)} />
+                        <SelectInput options={[{ value: "quota", text: "Por cuota" }, { value: "total", text: "Al total" }]} value={apartment?.subtractType} className={"w-full"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value, apartment?.id)} />
+                        <SelectInput options={apartment?.apartments} className={"w-full"} value={apartment?.apartment} onChange={(e) => onChangeApartment(e?.currentTarget?.value, apartment?.id)} />
+                        <SelectInput options={projects} className={"w-full"} value={apartment?.project} onChange={(e) => onChangeProject(e?.currentTarget?.value, apartment?.id)} />
                       </div>
                       <div className="flex items-center justify-end w-full gap-x-4">
-                        <Input placeholder={"Equivalente a:"} type="number" onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value), apartment.id)} className={"!w-full"} />
-                        <Input placeholder={"Valor USD"} type="number" className={"!w-full"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value), apartment.id)} />
+                        <Input placeholder={"Equivalente a:"} type="number" value={apartment?.total || ""} onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value), apartment.id)} className={"!w-full"} />
+                        <Input placeholder={"Valor USD"} type="number" value={apartment?.dollar || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value), apartment.id)} />
                       </div>
                     </div>
                   })}

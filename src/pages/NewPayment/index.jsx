@@ -41,11 +41,11 @@ const NewPayment = () => {
 
     data.total = data.amount - data.discountByApartments
 
-    data.white = {amount: data.total * budget?.percentage / 100}
-    data.black = {amount: data.total * (100 - budget?.percentage) / 100}
+    data.white = {amount: data.total * budget?.percentage / 100, mcp: (data.indexCac / budget?.baseIndex) * (data.total * budget?.percentage / 100)}
+    data.black = {amount: data.total * (100 - budget?.percentage) / 100, mcp: (data.indexCac / budget?.baseIndex) * (data.total * (100 - budget?.percentage) / 100)}
     data.budget = budget?._id
-    
-    console.log(data,  "-------------------------------", budget)
+    data.budget = budget
+
     data.paymentNumber = budget?.lastPayment?.paymentNumber + 1 || 1
 
     const result = (await customAxios.post("/payment", data)).data

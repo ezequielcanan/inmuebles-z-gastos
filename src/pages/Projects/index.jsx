@@ -21,7 +21,7 @@ const Projects = () => {
       <section>
         <Title className={"text-center xl:text-start"}>Proyectos</Title>
       </section>
-      <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
+      <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-2 2xl:grid-cols-3">
         {projects.length ? (
           projects.map((project,i) => {
             return <ProjectCard thumbnail={project.thumbnail} title={project.title} key={i}/>

@@ -1,10 +1,14 @@
+import { Link } from "react-router-dom"
+
 const ProjectCard = ({thumbnail, title, budgets}) => {
   return (
-    <div className="flex justify-between h-[250px] w-[280px] bg-secondary relative z-0 duration-300 hover:brightness-50">
-      <img src={`${import.meta.env.VITE_REACT_API_URL}/static/${thumbnail}`} alt="" className="w-full h-full object-cover"/>
-      <div className="absolute w-full flex py-4 justify-center top-0 left-0 h-full bg-black/30 z-10">
-        <h2 className="font-bold text-white text-2xl">{title}</h2>
-      </div>
+    <div className="relative w-full sm:w-[400px]">
+      <Link className={`flex flex-col relative shadow-xl shadow-[#000] z-10  h-[320px] bg-right bg-cover flex justify-center duration-500 justify-content-center hover:brightness-[40%] project-card`}>
+        <div className="absolute z-20 top-0 w-full h-[80px] flex items-center justify-center text-3xl font-bold bg-black/50 text-fourth px-3">
+          <h3 className="mx-auto flex items-center justify-center text-white">{title}</h3>
+        </div>
+        <img src={`${import.meta.env.VITE_REACT_API_URL}/static/${thumbnail}`} alt="" className="object-cover w-full h-full absolute z-0 bg-blend-multiply bg-black/80" />
+      </Link>
     </div>
   )
 }

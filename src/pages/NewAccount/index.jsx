@@ -32,6 +32,12 @@ const NewAccount = () => {
           <Input register={{...register("cbu")}}>
             <Label name={"cbu"} text={"CBU:"}/>
           </Input>
+          <Input register={{...register("alias")}}>
+            <Label name={"alias"} text={"Alias:"}/>
+          </Input>
+          <Input register={{...register("cuit")}}>
+            <Label name={"cuit"} text={"CUIT:"}/>
+          </Input>
           <Input register={{...register("bank")}}>
             <Label name={"bank"} text={"Banco:"}/>
           </Input>

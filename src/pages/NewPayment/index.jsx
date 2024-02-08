@@ -46,7 +46,8 @@ const NewPayment = () => {
     data.budget = budget?._id
     data.budget = budget
 
-    data.paymentNumber = budget?.lastPayment?.paymentNumber + 1 || 1
+    data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1
+    console.log(budget?.lastPayment?.paymentNumber + 1)
 
     const result = (await customAxios.post("/payment", data)).data
     const updateResult = (await customAxios.put(`/budget/${budget?._id}`, {lastPayment: result?.payload?._id})).data

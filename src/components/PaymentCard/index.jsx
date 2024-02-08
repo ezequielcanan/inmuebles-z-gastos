@@ -9,18 +9,7 @@ const PaymentCard = ({ payment, nextPayment, budget }) => {
       </div>
       <div>
         <p className="text-xl font-bold">Indice CAC: {payment?.indexCac}</p>
-        <p className="text-xl font-bold">Total: ${formatNumber(payment?.white?.amount + payment?.black?.amount)}</p>
-        <p className="text-xl">A: ${formatNumber(payment?.white?.amount)}</p>
-        <p className="text-xl">B: ${formatNumber(payment?.black?.amount)}</p>
-        <p className="text-xl font-bold">Mayor costo provisorio:</p>
-        <p className="text-xl">A: ${formatNumber(payment?.white?.mcp)}</p>
-        <p className="text-xl">B: ${formatNumber(payment?.black?.mcp)}</p>
-        {nextPayment &&
-          <>
-            <p className="text-xl font-bold">Mayor costo definitivo:</p>
-            <p className="text-xl">A: ${formatNumber(payment?.white?.mcd)}</p>
-            <p className="text-xl">B: ${formatNumber(payment?.black?.mcd)}</p>
-          </>}
+        <p className="text-xl font-bold">Porcentaje: {payment?.percentageOfTotal}</p>
       </div>
     </Link>
   )

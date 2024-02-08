@@ -12,17 +12,28 @@ import Label from "../../components/Label"
 import Subtitle from "../../components/Subtitle"
 import Input from "../../components/FormInput/Input"
 import Button from "../../components/Button"
+import { formatNumber } from "../../utils/numbers"
+import SubpaymentCard from "../../components/SubpaymentCard"
 
 const Payment = () => {
   const { pid } = useParams()
   const { register, handleSubmit, reset } = useForm()
   const [payment, setPayment] = useState(false)
+  const [lastPayment, setLastPayment] = useState(false)
   const [file, setFile] = useState(false)
   const [reloadFlag, setReloadFlag] = useState(false)
+  const [whiteBalance, setWhiteBalance] = useState(0)
 
   useEffect(() => {
-    customAxios.get(`/payment/${pid}`).then(res => {
-      setPayment(res?.data?.payload || {})
+    customAxios.get(`/payment/${pid}`).then(res1 => {
+      customAxios.get(`/payment/budget/${res1?.data?.payload?.budget?._id}`).then(res => {
+        const lastPayment = res?.data?.payload.find((p) => p?.paymentNumber == res1?.data?.payload?.paymentNumber - 1)
+        setWhiteBalance(lastPayment?.white?.payments?.reduce((acc, payment) => {
+          return acc + payment?.checks?.reduce((checkAcc, check) => check?.amount + checkAcc, payment?.cashPaid?.total)
+        },0))
+        setLastPayment(lastPayment || {})
+      })
+      setPayment(res1?.data?.payload || {})
     }).catch(e => {
       setPayment("error")
     })
@@ -47,7 +58,7 @@ const Payment = () => {
     const subPayment = payment[type]?.payments[payment[type]?.payments.length - 1]
     const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, subPayment.cashPaid.total)
     return total || 0
-  }
+  } 
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
@@ -64,6 +75,11 @@ const Payment = () => {
                 <Subtitle>Seccion A</Subtitle>
               </div>
               <div className="flex flex-col gap-y-[10px]">
+                <p className="text-2xl font-bold">Total: ${formatNumber(payment?.white?.amount)}</p>
+                <p className="text-2xl font-bold">Mayor costo provisorio: ${formatNumber(payment?.white?.mcp)}</p>
+                <p className="text-2xl font-bold">Mayor costo definitivo: ${formatNumber(lastPayment?.white?.mcd - lastPayment?.white?.mcp) || 0}</p>
+                <p className="text-2xl font-bold">IVA: %{formatNumber(payment?.white?.bill?.iva) || 0}</p>
+                <p className="text-2xl font-bold">Saldo pago anterior: {whiteBalance != 0  ? "$" + formatNumber(whiteBalance) : "No se pago nada"}</p>
                 <div className="flex w-full gap-8 justify-between items-center">
                   <p className="text-xl">Último adelanto: {getLastSubpaymentTotal("white") ? "$"+getLastSubpaymentTotal("white") : "No hay adelantos"}</p>
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
@@ -71,6 +87,11 @@ const Payment = () => {
                       Agregar adelanto
                     </Button>
                   </Link>
+                </div>
+                <div className="grid lg:grid-cols-2 gap-8">
+                  {payment?.white?.payments?.map((p,i) => {
+                    return <SubpaymentCard payment={p} key={i}/>
+                  })}
                 </div>
                 {!payment?.white?.bill && <Form onSubmit={onSubmit} className={"bg-secondary text-white flex flex-col items-center justify-between self-center p-5"}>
                   <Input type="file" className={"hidden"} containerClassName={"border-b-0 text-center max-w-[200px] w-full"} id="file" onChange={(e) => setFile(e.target.files[0])}>

@@ -20,6 +20,7 @@ const NewPayment = () => {
   const { bid } = useParams()
   const { register, handleSubmit } = useForm()
   const [budget, setBudget] = useState()
+  const [files, setFiles] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -33,26 +34,36 @@ const NewPayment = () => {
   const onSubmit = handleSubmit(async data => {
     data.percentageOfTotal = data.percentageOfTotal || ((budget?.total / budget?.quotas) * 100 / budget?.total)
     data.amount = (budget?.total - budget?.advanced) * data?.percentageOfTotal / 100
-    data.discountByApartments = budget?.paidApartments?.reduce((acc, apartment) => apartment.discount == "quota" ? acc + (apartment?.apartment?.total * apartment?.apartment?.dolar) * data.percentageOfTotal / 100 : acc,0)
+    data.discountByApartments = budget?.paidApartments?.reduce((acc, apartment) => apartment.discount == "quota" ? acc + (apartment?.apartment?.total * apartment?.apartment?.dolar) * data.percentageOfTotal / 100 : acc, 0)
     if (!data.indexCac) {
       const cacHistory = (await axios.get("https://prestamos.ikiwi.net.ar/api/cacs")).data
       data.indexCac = cacHistory[cacHistory.length - 1]?.general
     }
 
-    data.total = data.amount - data.discountByApartments
+    data.total = data.amount
 
-    data.white = {amount: data.total * budget?.percentage / 100, mcp: (data.indexCac / budget?.baseIndex) * (data.total * budget?.percentage / 100)}
-    data.black = {amount: data.total * (100 - budget?.percentage) / 100, mcp: (data.indexCac / budget?.baseIndex) * (data.total * (100 - budget?.percentage) / 100)}
+    data.white = { amount: data.total * budget?.percentage / 100, mcp: ((data.indexCac / budget?.baseIndex) - 1) * (data.total * budget?.percentage / 100) }
+    data.black = { amount: data.total * (100 - budget?.percentage) / 100, mcp: ((data.indexCac / budget?.baseIndex) - 1) * (data.total * (100 - budget?.percentage) / 100) }
     data.budget = budget?._id
     data.budget = budget
 
-    data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1
-    console.log(budget?.lastPayment?.paymentNumber + 1)
-
+    data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1  
+    
     const result = (await customAxios.post("/payment", data)).data
-    const updateResult = (await customAxios.put(`/budget/${budget?._id}`, {lastPayment: result?.payload?._id})).data
+    const updateResult = (await customAxios.put(`/budget/${budget?._id}`, { lastPayment: result?.payload?._id })).data
+    data.folder = `projects/${budget?.project?._id}/budgets/${result?.payload?.budget}/payments/${result?.payload?._id}`
+
+    const formData = new FormData()
+    formData.append("data", JSON.stringify(data))
+    Object.values(files).forEach((file) => {
+      formData.append("files", file)
+    })
+
+    const fileResult = (await customAxios.post(`/payment/files`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data
     navigate(`/budgets/${budget?._id}`)
   })
+
+  console.log(budget?.project?._id)
 
   return (
     <Main className={"grid items-center justify-items-center gap-y-[30px] py-[100px]"} paddings>
@@ -70,12 +81,18 @@ const NewPayment = () => {
             <GiMoneyStack className="text-[100px] md:text-[180px]" />
             <Form onSubmit={onSubmit}>
               {budget?.paymentType == "advance" ? (
-                <Input type="number" className="!w-[100px]" register={{ ...register("percentageOfTotal", {required: true}) }}>
+                <Input type="number" className="!w-[100px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
                 </Input>
               ) : null}
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>
                 <Label name={"indexCac"} text={"Indice CAC:"} />
+              </Input>
+              <Input type="file" className={"hidden"} id="file" multiple="multiple" onChange={(e) => setFiles(e.target?.files)}>
+                <p className="font-ubuntu md:text-4xl">Archivos</p>
+                <Label name={"file"} className={"py-4 px-4 flex w-full justify-end cursor-pointer text-center"}>
+                  {!files ? <FaFileArrowUp /> : <p className="py-3 px-3 max-w-[200px] overflow-hidden bg-primary">{files.length} archivo/s</p>}
+                </Label>
               </Input>
               <Button type="submit" style="submit" className={"text-black"}>
                 Ingresar pago

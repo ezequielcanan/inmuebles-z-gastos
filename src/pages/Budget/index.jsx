@@ -11,11 +11,14 @@ import Subtitle from "../../components/Subtitle"
 import { formatNumber } from "../../utils/numbers"
 import Button from "../../components/Button"
 import PaymentCard from "../../components/PaymentCard"
+import Note from "../../components/Note"
+import { FaNoteSticky } from "react-icons/fa6"
 
 const Budget = () => {
   const { bid } = useParams()
   const [budget, setBudget] = useState(false)
   const [payments, setPayments] = useState(false)
+  const [reload, setReload] = useState(false)
 
   useEffect(() => {
     customAxios.get(`/budget/${bid}`).then(res => {
@@ -23,13 +26,18 @@ const Budget = () => {
     }).catch(e => {
       setBudget("error")
     })
-  }, [])
+  }, [reload])
 
   useEffect(() => {
     customAxios.get(`/payment/budget/${bid}`).then(res => {
       setPayments(res?.data?.payload || [])
     })
-  }, [])
+  }, [reload])
+
+  const addNote = async () => {
+    const result = (await customAxios.post(`/budget/${bid}/notes`, {date: moment(), note: ""})).data
+    setBudget(result?.payload)
+  }
 
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
@@ -37,7 +45,7 @@ const Budget = () => {
         <>
           <Section>
             <Title className={"text-center xl:text-start"}>
-              Presupuesto {budget?.code || moment(budget?.date).format("YYYY-MM-DD")}: {budget?.supplier?.name} - {budget?.project?.title}
+              Presupuesto {budget?.title || budget?.code || budget?.date}: {budget?.supplier?.name} - {budget?.project?.title}
             </Title>
             <Link to={`/budgets/${budget?._id}/payments/new`}>
               <Button>Pagar cuota</Button>
@@ -76,9 +84,21 @@ const Budget = () => {
           <section className="flex flex-col items-start gap-y-[30px]">
             <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
             <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
-              {payments?.map((payment,i) => {
+              {payments.length ? payments?.map((payment, i) => {
                 return <PaymentCard payment={payment} nextPayment={payments[i + 1]} budget={budget} key={i} />
-              })}
+              }) : <p>No hay pagos registrados</p>}
+            </div>
+          </section>
+          <section className="flex flex-col items-start gap-y-[30px]">
+            <Subtitle className={"w-full sm:w-auto"}>Notas</Subtitle>
+            <div className="flex flex-col gap-y-[10px] w-full">
+              {budget?.notes?.length ? budget?.notes?.map((note, i) => {
+                console.log(note.note)
+                return <Note note={note} bid={bid} setReload={setReload} key={note._id}/>
+              }) : <p>No hay notas registradas</p>}
+              <Button className={"bg-blue-500 after:bg-blue-700 self-start"} onClick={addNote}>
+                Agregar nota <FaNoteSticky/>
+              </Button>
             </div>
           </section>
         </>

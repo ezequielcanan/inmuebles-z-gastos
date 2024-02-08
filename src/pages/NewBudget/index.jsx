@@ -46,6 +46,7 @@ const NewBudget = () => {
 
   const onSubmit = handleSubmit(async data => {
     data.paidApartments = paidApartments
+    data.booking = data.bookingMethod == "bookingMoney" ? data.booking : data.booking * data.total / 100
     const result = (await customAxios.post("/budget", data, { headers: { "Content-Type": "application/json" } })).data
 
     data.folder = `projects/${result?.payload?.project}/budgets/${result?.payload?._id}`
@@ -131,6 +132,9 @@ const NewBudget = () => {
             <CiViewTable className="text-[100px] md:text-[180px]" />
             <Form className={"grid 2xl:grid-cols-2 gap-8"} onSubmit={onSubmit}>
               <div className="flex flex-col gap-y-[20px]">
+                <Input register={{ ...register("title") }} className={"md:!w-[300px]"}>
+                  <Label name={"title"} text={"Titulo:"} />
+                </Input>
                 <SelectInput options={projects} register={{ ...register("project") }}>
                   <Label name={"project"} text={"Proyecto:"} />
                 </SelectInput>
@@ -171,8 +175,9 @@ const NewBudget = () => {
                 <Input register={{ ...register("dollarPrice") }} type="number" className={"md:!w-[300px]"}>
                   <Label name={"dollarPrice"} text={"Precio del dolar:"} />
                 </Input>
-                <Input register={{ ...register("booking") }} type="number" className={"md:!w-[300px]"}>
+                <Input register={{ ...register("booking") }} type="number" containerClassName={"!w-full"} className={"md:!w-full"}>
                   <Label name={"booking"} text={"Adelanto:"} />
+                  <SelectInput register={{...register("bookingMethod")}} containerClassName={"!border-b-0"} options={[{text: "En porcentaje", value: "bookingPercentage"}, {text: "En dinero", value: "bookingMoney"}]}/>
                 </Input>
                 <h2 className="text-2xl md:text-4xl font-ubuntu">Departamentos en pago</h2>
                 <div className="flex flex-col gap-y-[70px]">

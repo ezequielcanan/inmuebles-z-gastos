@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { BounceLoader } from "react-spinners"
-import { FaFileArrowUp, FaFileCircleCheck } from "react-icons/fa6"
+import { FaDownload, FaFileArrowUp, FaFileCircleCheck } from "react-icons/fa6"
 import { useForm } from "react-hook-form"
 import Form from "../../components/Form"
 import Title from "../../components/Title"
@@ -20,6 +20,7 @@ const Payment = () => {
   const { register, handleSubmit, reset } = useForm()
   const [payment, setPayment] = useState(false)
   const [lastPayment, setLastPayment] = useState(false)
+  const [paymentFiles, setPaymentFiles] = useState([])
   const [file, setFile] = useState(false)
   const [reloadFlag, setReloadFlag] = useState(false)
   const [whiteBalance, setWhiteBalance] = useState(0)
@@ -30,7 +31,7 @@ const Payment = () => {
         const lastPayment = res?.data?.payload.find((p) => p?.paymentNumber == res1?.data?.payload?.paymentNumber - 1)
         setWhiteBalance(lastPayment?.white?.payments?.reduce((acc, payment) => {
           return acc + payment?.checks?.reduce((checkAcc, check) => check?.amount + checkAcc, payment?.cashPaid?.total)
-        },0))
+        }, 0))
         setLastPayment(lastPayment || {})
       })
       setPayment(res1?.data?.payload || {})
@@ -39,10 +40,14 @@ const Payment = () => {
     })
   }, [reloadFlag])
 
+  useEffect(() => {
+
+  }, [reloadFlag])
+
   const onSubmit = handleSubmit(async data => {
     data.receiver = payment?.budget?.supplier?._id
     const result = (await customAxios.post(`/bill/${pid}`, data)).data
-    
+
     data.folder = `projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${result?.payload?._id}`
     const formData = new FormData()
     formData.append("data", JSON.stringify(data))
@@ -53,12 +58,12 @@ const Payment = () => {
     setReloadFlag(!reloadFlag)
     setFile(false)
   })
-  
+
   const getLastSubpaymentTotal = (type) => {
     const subPayment = payment[type]?.payments[payment[type]?.payments.length - 1]
     const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, subPayment.cashPaid.total)
     return total || 0
-  } 
+  }
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
@@ -69,19 +74,26 @@ const Payment = () => {
               Pago {payment?.paymentNumber} - {payment?.budget?.supplier?.name}
             </Title>
           </Section>
+          <section className="flex">
+
+          </section>
           <section className="grid sm:grid-cols-2 gap-16">
             <div className="flex flex-col gap-y-[50px]">
               <div>
                 <Subtitle>Seccion A</Subtitle>
               </div>
               <div className="flex flex-col gap-y-[10px]">
-                <p className="text-2xl font-bold">Total: ${formatNumber(payment?.white?.amount)}</p>
-                <p className="text-2xl font-bold">Mayor costo provisorio: ${formatNumber(payment?.white?.mcp)}</p>
-                <p className="text-2xl font-bold">Mayor costo definitivo: ${formatNumber(lastPayment?.white?.mcd - lastPayment?.white?.mcp) || 0}</p>
-                <p className="text-2xl font-bold">IVA: %{formatNumber(payment?.white?.bill?.iva) || 0}</p>
-                <p className="text-2xl font-bold">Saldo pago anterior: {whiteBalance != 0  ? "$" + formatNumber(whiteBalance) : "No se pago nada"}</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-2xl font-bold">Descargar detalle</p>
+                  <a href={`${import.meta.env.VITE_REACT_API_URL}/api/payment/excel/${payment?._id}`} download>
+                    <Button style="icon" className={"text-white w-16 h-16"}>
+                      <FaDownload className="text-5xl p-1" />
+                    </Button>
+                  </a>
+                </div>
+                <p className="text-2xl font-bold">TOTAL A PAGAR: ${formatNumber(payment?.white?.amount)}</p>
                 <div className="flex w-full gap-8 justify-between items-center">
-                  <p className="text-xl">Último adelanto: {getLastSubpaymentTotal("white") ? "$"+getLastSubpaymentTotal("white") : "No hay adelantos"}</p>
+                  <p className="text-xl">Último adelanto: {getLastSubpaymentTotal("white") ? "$" + getLastSubpaymentTotal("white") : "No hay adelantos"}</p>
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
                     <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
                       Agregar adelanto
@@ -89,8 +101,8 @@ const Payment = () => {
                   </Link>
                 </div>
                 <div className="grid lg:grid-cols-2 gap-8">
-                  {payment?.white?.payments?.map((p,i) => {
-                    return <SubpaymentCard payment={p} key={i}/>
+                  {payment?.white?.payments?.map((p, i) => {
+                    return <SubpaymentCard payment={p} key={i} />
                   })}
                 </div>
                 {!payment?.white?.bill && <Form onSubmit={onSubmit} className={"bg-secondary text-white flex flex-col items-center justify-between self-center p-5"}>
@@ -102,16 +114,19 @@ const Payment = () => {
                       </>}
                     </Label>
                   </Input>
-                  <Input register={{...register("iva", {required: true})}} containerClassName={"!w-full"} className={"!w-full max-w-[150px]"}>
+                  <Input register={{ ...register("iva", { required: true }) }} containerClassName={"!w-full"} className={"!w-full max-w-[150px]"}>
                     <Label name={"iva"}>IVA:</Label>
                   </Input>
-                  <Input register={{...register("code", {required: true})}} containerClassName={"!w-full"} className={"!w-full"}>
+                  <Input register={{ ...register("taxes", { required: true }) }} containerClassName={"!w-full"} className={"!w-full max-w-[150px]"}>
+                    <Label name={"taxes"}>Otros impuestos:</Label>
+                  </Input>
+                  <Input register={{ ...register("code", { required: true }) }} containerClassName={"!w-full"} className={"!w-full"}>
                     <Label name={"code"}>N° de factura:</Label>
                   </Input>
-                  <Input register={{ ...register("emissionDate", {required: true}) }} type="date" containerClassName={"!w-full"} className={"!w-full"}>
+                  <Input register={{ ...register("emissionDate", { required: true }) }} type="date" containerClassName={"!w-full"} className={"!w-full"}>
                     <Label name={"emissionDate"} text={"Fecha de emision:"} />
                   </Input>
-                  <Input register={{...register("amount", {required: true})}} placeholder={"Con iva incluido"} containerClassName={"!w-full"} className={"!w-full"}>
+                  <Input register={{ ...register("amount", { required: true }) }} placeholder={"Con iva incluido"} containerClassName={"!w-full"} className={"!w-full"}>
                     <Label name={"amount"}>TOTAL:</Label>
                   </Input>
                   <Button className={"text-center justify-center max-w-[200px] w-[200px]"} type="submit">

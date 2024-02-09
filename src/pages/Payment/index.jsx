@@ -16,6 +16,7 @@ import Input from "../../components/FormInput/Input"
 import Button from "../../components/Button"
 import { formatNumber } from "../../utils/numbers"
 import SubpaymentCard from "../../components/SubpaymentCard"
+import SelectInput from "../../components/FormInput/SelectInput"
 
 const Payment = () => {
   const { pid } = useParams()
@@ -41,7 +42,7 @@ const Payment = () => {
   }, [reloadFlag])
 
   const addNote = async () => {
-    const result = (await customAxios.post(`/payment/${payment?._id}/notes`, {date: moment(), note: ""})).data
+    const result = (await customAxios.post(`/payment/${payment?._id}/notes`, { date: moment(), note: "" })).data
     setReloadFlag(!reloadFlag)
   }
 
@@ -62,9 +63,11 @@ const Payment = () => {
 
   const getLastSubpaymentTotal = (type) => {
     const subPayment = payment[type]?.payments[payment[type]?.payments.length - 1]
-    const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, subPayment.cashPaid.total)
+    const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, 0)
     return total || 0
   }
+
+  const billOptions = [{ text: "Certficado", value: "certificate" }, { text: "MCD", value: "mcd" }, { text: "MCP", value: "mcp" }]
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
@@ -106,35 +109,38 @@ const Payment = () => {
                     return <SubpaymentCard payment={p} key={i} />
                   })}
                 </div>
-                {!payment?.white?.bill && <Form onSubmit={onSubmit} className={"bg-secondary text-white flex flex-col items-center justify-between self-center p-5"}>
-                  <Input type="file" className={"hidden"} containerClassName={"border-b-0 text-center max-w-[200px] w-full"} id="file" onChange={(e) => setFile(e.target.files[0])}>
-                    <Label name={"file"} className={"flex flex-col cursor-pointer text-center items-center justify-center border-4 border-white text-white max-w-[200px] w-full max-h-[200px] h-[200px]"}>
-                      {!file ? <FaFileArrowUp /> : <>
-                        <FaFileCircleCheck size={180} className="p-4" />
-                        <p className="text-sm w-full overflow-hidden bg-white text-primary !text-wrap">{file.name}</p>
-                      </>}
-                    </Label>
-                  </Input>
-                  <Input register={{ ...register("iva", { required: true }) }} containerClassName={"!w-full"} className={"!w-full max-w-[150px]"}>
-                    <Label name={"iva"}>IVA:</Label>
-                  </Input>
-                  <Input register={{ ...register("taxes", { required: true }) }} containerClassName={"!w-full"} className={"!w-full max-w-[150px]"}>
-                    <Label name={"taxes"}>Otros impuestos:</Label>
-                  </Input>
-                  <Input register={{ ...register("code", { required: true }) }} containerClassName={"!w-full"} className={"!w-full"}>
-                    <Label name={"code"}>N° de factura:</Label>
-                  </Input>
-                  <Input register={{ ...register("emissionDate", { required: true }) }} type="date" containerClassName={"!w-full"} className={"!w-full"}>
-                    <Label name={"emissionDate"} text={"Fecha de emision:"} />
-                  </Input>
-                  <Input register={{ ...register("amount", { required: true }) }} placeholder={"Con iva incluido"} containerClassName={"!w-full"} className={"!w-full"}>
-                    <Label name={"amount"}>TOTAL:</Label>
-                  </Input>
-                  <Button className={"text-center justify-center max-w-[200px] w-[200px]"} type="submit">
-                    Subir factura
-                  </Button>
-                </Form>}
               </div>
+              <Form onSubmit={onSubmit} className={"bg-third text-black flex flex-col items-center justify-between self-center p-5"}>
+                <Input type="file" className={"hidden"} containerClassName={"!border-b-0 text-center max-w-[200px] w-full"} id="file" onChange={(e) => setFile(e.target.files[0])}>
+                  <Label name={"file"} className={"flex flex-col cursor-pointer text-center items-center justify-center border-4 border-black text-black max-w-[200px] w-full max-h-[200px] h-[200px]"}>
+                    {!file ? <FaFileArrowUp /> : <>
+                      <FaFileCircleCheck size={180} className="p-4" />
+                      <p className="text-sm w-full overflow-hidden bg-white text-primary !text-wrap">{file.name}</p>
+                    </>}
+                  </Label>
+                </Input>
+                <Input register={{ ...register("iva", { required: true }) }} containerClassName={"!w-full border-b-black"} className={"!w-full max-w-[150px]"}>
+                  <Label name={"iva"}>IVA:</Label>
+                </Input>
+                <Input register={{ ...register("taxes", { required: true }) }} containerClassName={"!w-full border-b-black"} className={"!w-full max-w-[150px]"}>
+                  <Label name={"taxes"}>Otros impuestos:</Label>
+                </Input>
+                <Input register={{ ...register("code", { required: true }) }} containerClassName={"!w-full border-b-black"} className={"!w-full"}>
+                  <Label name={"code"}>N° de factura:</Label>
+                </Input>
+                <Input register={{ ...register("emissionDate", { required: true }) }} type="date" containerClassName={"!w-full border-b-black"} className={"!w-full"}>
+                  <Label name={"emissionDate"} text={"Fecha de emision:"} />
+                </Input>
+                <Input register={{ ...register("amount", { required: true }) }} placeholder={"Sin impuestos incluidos"} containerClassName={"!w-full border-b-black"} className={"!w-full"}>
+                  <Label name={"amount"}>TOTAL:</Label>
+                </Input>
+                <SelectInput options={billOptions} containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>
+                  <Label name={"concept"} text={"En concepto de:"} />
+                </SelectInput>
+                <Button className={"text-center justify-center max-w-[200px] w-[200px]"} type="submit">
+                  Subir factura
+                </Button>
+              </Form>
             </div>
             <div className="flex flex-col gap-y-[50px]">
               <div>

@@ -33,7 +33,7 @@ const NewPayment = () => {
 
   const onSubmit = handleSubmit(async data => {
     data.percentageOfTotal = data.percentageOfTotal || ((budget?.total / budget?.quotas) * 100 / budget?.total)
-    data.amount = (budget?.total - budget?.advanced) * data?.percentageOfTotal / 100
+    data.amount = budget?.total * data?.percentageOfTotal / 100
     data.discountByApartments = budget?.paidApartments?.reduce((acc, apartment) => apartment.discount == "quota" ? acc + (apartment?.apartment?.total * apartment?.apartment?.dolar) * data.percentageOfTotal / 100 : acc, 0)
     if (!data.indexCac) {
       const cacHistory = (await axios.get("https://prestamos.ikiwi.net.ar/api/cacs")).data
@@ -50,7 +50,7 @@ const NewPayment = () => {
     data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1  
     
     const result = (await customAxios.post("/payment", data)).data
-    const updateResult = (await customAxios.put(`/budget/${budget?._id}`, { lastPayment: result?.payload?._id })).data
+    const updateResult = (await customAxios.put(`/budget/${budget?._id}`, { lastPayment: result?.payload?._id, advanced: budget?.advanced + data.total })).data
     data.folder = `projects/${budget?.project?._id}/budgets/${result?.payload?.budget}/payments/${result?.payload?._id}`
 
     const formData = new FormData()
@@ -63,7 +63,6 @@ const NewPayment = () => {
     navigate(`/budgets/${budget?._id}`)
   })
 
-  console.log(budget?.project?._id)
 
   return (
     <Main className={"grid items-center justify-items-center gap-y-[30px] py-[100px]"} paddings>

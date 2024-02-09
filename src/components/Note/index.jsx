@@ -6,13 +6,13 @@ import Button from "../Button"
 import Textarea from "../FormInput/Textarea"
 import customAxios from "../../config/axios.config"
 
-const Note = ({ note, bid, setReload }) => {
+const Note = ({ note, id, endpoint="budget", setReload }) => {
   const updateNote = async (e) => {
-    await customAxios.put(`/budget/${bid}/notes/${note?._id}`, { note: e.target?.value })
+    await customAxios.put(`/${endpoint}/${id}/notes/${note?._id}`, { note: e.target?.value })
   }
 
   const deleteNote = async (nid) => {
-    const result = (await customAxios.delete(`/budget/${bid}/notes/${nid}`)).data
+    const result = (await customAxios.delete(`/${endpoint}/${id}/notes/${nid}`)).data
     setReload(prev => !prev)
   }
 

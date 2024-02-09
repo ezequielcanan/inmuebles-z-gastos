@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { BounceLoader } from "react-spinners"
-import { FaDownload, FaFileArrowUp, FaFileCircleCheck } from "react-icons/fa6"
+import { FaDownload, FaFileArrowUp, FaFileCircleCheck, FaNoteSticky } from "react-icons/fa6"
 import { useForm } from "react-hook-form"
+import moment from "moment"
 import Form from "../../components/Form"
+import Note from "../../components/Note"
 import Title from "../../components/Title"
 import Main from "../../containers/Main"
 import Section from "../../containers/Section"
@@ -20,7 +22,6 @@ const Payment = () => {
   const { register, handleSubmit, reset } = useForm()
   const [payment, setPayment] = useState(false)
   const [lastPayment, setLastPayment] = useState(false)
-  const [paymentFiles, setPaymentFiles] = useState([])
   const [file, setFile] = useState(false)
   const [reloadFlag, setReloadFlag] = useState(false)
   const [whiteBalance, setWhiteBalance] = useState(0)
@@ -32,7 +33,6 @@ const Payment = () => {
         setWhiteBalance(lastPayment?.white?.payments?.reduce((acc, payment) => {
           return acc + payment?.checks?.reduce((checkAcc, check) => check?.amount + checkAcc, payment?.cashPaid?.total)
         }, 0))
-        setLastPayment(lastPayment || {})
       })
       setPayment(res1?.data?.payload || {})
     }).catch(e => {
@@ -40,9 +40,10 @@ const Payment = () => {
     })
   }, [reloadFlag])
 
-  useEffect(() => {
-
-  }, [reloadFlag])
+  const addNote = async () => {
+    const result = (await customAxios.post(`/payment/${payment?._id}/notes`, {date: moment(), note: ""})).data
+    setReloadFlag(!reloadFlag)
+  }
 
   const onSubmit = handleSubmit(async data => {
     data.receiver = payment?.budget?.supplier?._id
@@ -143,7 +144,18 @@ const Payment = () => {
                 <p className="text-xl">Último adelanto: {payment?.black?.payments[payment?.black?.payments.length - 1]?.checks?.length || "No hay adelantos"}</p>
               </div>
             </div>
-
+          </section>
+          <section className="flex flex-col items-start gap-y-[30px]">
+            <Subtitle className={"w-full sm:w-auto"}>Notas</Subtitle>
+            <div className="flex flex-col gap-y-[10px] w-full">
+              {payment?.notes?.length ? payment?.notes?.map((note, i) => {
+                console.log(note.note)
+                return <Note note={note} setReload={setReloadFlag} id={payment?._id} endpoint="payment" key={note._id} />
+              }) : <p>No hay notas registradas</p>}
+              <Button className={"bg-blue-500 after:bg-blue-700 self-start"} onClick={addNote}>
+                Agregar nota <FaNoteSticky />
+              </Button>
+            </div>
           </section>
         </>
       ) : (

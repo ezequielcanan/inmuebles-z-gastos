@@ -94,7 +94,7 @@ const Budget = () => {
             <div className="flex flex-col gap-y-[10px] w-full">
               {budget?.notes?.length ? budget?.notes?.map((note, i) => {
                 console.log(note.note)
-                return <Note note={note} bid={bid} setReload={setReload} key={note._id}/>
+                return <Note note={note} id={bid} setReload={setReload} key={note._id}/>
               }) : <p>No hay notas registradas</p>}
               <Button className={"bg-blue-500 after:bg-blue-700 self-start"} onClick={addNote}>
                 Agregar nota <FaNoteSticky/>

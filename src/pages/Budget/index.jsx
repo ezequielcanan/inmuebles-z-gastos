@@ -12,7 +12,7 @@ import { formatNumber } from "../../utils/numbers"
 import Button from "../../components/Button"
 import PaymentCard from "../../components/PaymentCard"
 import Note from "../../components/Note"
-import { FaNoteSticky } from "react-icons/fa6"
+import { FaDownload, FaNoteSticky } from "react-icons/fa6"
 
 const Budget = () => {
   const { bid } = useParams()
@@ -82,7 +82,10 @@ const Budget = () => {
             ) : null}
           </section>
           <section className="flex flex-col items-start gap-y-[30px]">
-            <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
+            <div className="flex w-full justify-between items-center">
+              <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
+              <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl"><FaDownload/></a>
+            </div>
             <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
               {payments.length ? payments?.map((payment, i) => {
                 return <PaymentCard payment={payment} nextPayment={payments[i + 1]} budget={budget} key={i} />

@@ -7,6 +7,7 @@ import { FaFileArrowUp } from "react-icons/fa6"
 import moment from "moment"
 import Title from "../../components/Title"
 import Subtitle from "../../components/Subtitle"
+import SelectInput from "../../components/FormInput/SelectInput"
 import Main from "../../containers/Main"
 import Section from "../../containers/Section"
 import customAxios from "../../config/axios.config"
@@ -32,7 +33,7 @@ const NewPayment = () => {
   }, [])
 
   const onSubmit = handleSubmit(async data => {
-    data.percentageOfTotal = data.percentageOfTotal || ((budget?.total / budget?.quotas) * 100 / budget?.total)
+    data.percentageOfTotal = data.advanceMethod == "percentage" ? (data.percentageOfTotal || ((budget?.total / budget?.quotas) * 100 / budget?.total)) : (data.percentageOfTotal * 100 / budget?.total)
     data.amount = budget?.total * data?.percentageOfTotal / 100
     data.discountByApartments = budget?.paidApartments?.reduce((acc, apartment) => apartment.discount == "quota" ? acc + (apartment?.apartment?.total * apartment?.apartment?.dolar) * data.percentageOfTotal / 100 : acc, 0)
     if (!data.indexCac) {
@@ -70,7 +71,7 @@ const NewPayment = () => {
         <>
           <Section className={"!flex-col"}>
             <Title className={"text-center xl:text-start"}>
-              Presupuesto {budget?.code || moment(budget?.date).format("YYYY-MM-DD")}: {budget?.supplier?.name} - {budget?.project?.title}
+              Presupuesto {budget?.code || moment.utc(budget?.date).format("YYYY-MM-DD")}: {budget?.supplier?.name} - {budget?.project?.title}
             </Title>
             <Subtitle className={"md:text-5xl"}>
               Nuevo pago
@@ -80,8 +81,9 @@ const NewPayment = () => {
             <GiMoneyStack className="text-[100px] md:text-[180px]" />
             <Form onSubmit={onSubmit}>
               {budget?.paymentType == "advance" ? (
-                <Input type="number" className="!w-[100px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
+                <Input type="number" className="!max-w-[300px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
+                  <SelectInput register={{...register("advanceMethod")}} options={[{text: "%", value: "percentage"}, {text: "$", value: "money"}]}/>
                 </Input>
               ) : null}
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>

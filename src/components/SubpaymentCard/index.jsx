@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router-dom"
 
-const SubpaymentCard = ({payment}) => {
+const SubpaymentCard = ({payment, type}) => {
   const location = useLocation()
   const checksTotal = payment?.checks?.reduce((acc,check) => acc + check.amount,0)
 
-  return <Link to={`${location.pathname}/${payment?._id}`} className="bg-secondary shadow-[10px_10px_15px_0px_#f5401c] cursor-pointer border-primary flex flex-col w-full gap-y-4 py-6 px-6 text-black duration-300 hover:scale-105">
+  return <Link to={`${location.pathname}/${type}/${payment?._id}`} className="bg-secondary shadow-[10px_10px_15px_0px_#f5401c] cursor-pointer border-primary flex flex-col w-full gap-y-4 py-6 px-6 text-black duration-300 hover:scale-105">
     <div>
       <h3 className="font-bold text-2xl">Adelanto</h3>
     </div>

@@ -9,7 +9,7 @@ const PaymentCard = ({ payment, nextPayment, budget }) => {
       </div>
       <div>
         <p className="text-xl font-bold">Indice CAC: {payment?.indexCac}</p>
-        <p className="text-xl font-bold">Porcentaje: {payment?.percentageOfTotal}</p>
+        <p className="text-xl font-bold">Porcentaje: {payment?.percentageOfTotal?.toFixed(2)}</p>
       </div>
     </Link>
   )

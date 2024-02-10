@@ -106,7 +106,7 @@ const Payment = () => {
                 </div>
                 <div className="grid lg:grid-cols-2 gap-8">
                   {payment?.white?.payments?.map((p, i) => {
-                    return <SubpaymentCard payment={p} key={i} />
+                    return <SubpaymentCard payment={p} type={"a"} key={i} />
                   })}
                 </div>
               </div>

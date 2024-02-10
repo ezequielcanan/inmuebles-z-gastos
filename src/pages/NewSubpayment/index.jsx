@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { FaPlus, FaFileArrowUp } from "react-icons/fa6"
 import { RiSubtractFill } from "react-icons/ri"
@@ -22,6 +22,7 @@ const NewSubpayment = () => {
   const [payment, setPayment] = useState()
   const [checks, setChecks] = useState([])
   const [transfers, setTransfers] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     customAxios.get(`/payment/${pid}`).then(res => {
@@ -45,6 +46,7 @@ const NewSubpayment = () => {
   const onSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
     data.date = moment()
+    payment?.white?.bills.length && (data.retention = {amount: data.retention * payment?.white?.bills[0]?.amount / 100, code: data.retentionNumber})
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
 
@@ -69,7 +71,9 @@ const NewSubpayment = () => {
     }))
 
     data.checks = checksResult.payload.map((c, i) => c._id)
+    data.transfers = transferResult.payload.map((t, i) => t._id)
     const paymentResult = (await customAxios.post(`/white-payment/${pid}`, data)).data
+    navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
   })
 
   const arrayIndex = (id, array = checks) => {

@@ -19,7 +19,7 @@ const Note = ({ note, id, endpoint="budget", setReload }) => {
   return <div className="flex items-center border-4 gap-16 border-secondary w-full p-4">
     <Textarea containerClassName="!border-b-0 w-full" className={"!text-md !w-full !leading-loose"} onChange={updateNote} defaultValue={note?.note}>
       <Label>
-        {moment(note?.date).format("YYYY-MM-DD HH:mm:ss")}
+        {moment.utc(note?.date).format("YYYY-MM-DD HH:mm:ss")}
       </Label>
     </Textarea>
     <Button style="icon" className={"bg-red-500 text-white"} onClick={() => deleteNote(note?._id)}>

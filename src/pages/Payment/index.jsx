@@ -41,6 +41,16 @@ const Payment = () => {
     })
   }, [reloadFlag])
 
+  const getSectionTotal = (type) => {
+    const adjustment = (payment?.indexCac / payment?.budget?.baseIndex)
+    const mcd = ((lastPayment[type]?.amount * adjustment) - lastPayment[type]?.mcp) || 0
+    const mcp = payment[type]?.amount * (adjustment - 1)
+    const total = mcd + mcp + payment[type]?.amount
+    const taxes = total * (payment[type]?.bills?.length ? ((payment[type]?.bills[0]?.bill?.iva + payment[type]?.bills[0]?.bill?.taxes) || 0) / 100 : 0) 
+
+    return formatNumber((total + taxes) || 0)
+  }
+
   const addNote = async () => {
     const result = (await customAxios.post(`/payment/${payment?._id}/notes`, { date: moment(), note: "" })).data
     setReloadFlag(!reloadFlag)
@@ -77,6 +87,11 @@ const Payment = () => {
             <Title>
               Pago {payment?.paymentNumber} - {payment?.budget?.supplier?.name}
             </Title>
+            <a href={`${import.meta.env.VITE_REACT_API_URL}/api/payment/excel/${payment?._id}`} download>
+              <Button style="icon" className={"text-white w-16 h-16"}>
+                <FaDownload className="text-5xl p-1" />
+              </Button>
+            </a>
           </Section>
           <section className="flex">
 
@@ -87,17 +102,8 @@ const Payment = () => {
                 <Subtitle>Seccion A</Subtitle>
               </div>
               <div className="flex flex-col gap-y-[10px]">
-                <div className="flex justify-between items-center">
-                  <p className="text-2xl font-bold">Descargar detalle</p>
-                  <a href={`${import.meta.env.VITE_REACT_API_URL}/api/payment/excel/${payment?._id}`} download>
-                    <Button style="icon" className={"text-white w-16 h-16"}>
-                      <FaDownload className="text-5xl p-1" />
-                    </Button>
-                  </a>
-                </div>
-                <p className="text-2xl font-bold">TOTAL A PAGAR: ${formatNumber(payment?.white?.amount)}</p>
+                <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("white")}</p>
                 <div className="flex w-full gap-8 justify-between items-center">
-                  <p className="text-xl">Último adelanto: {getLastSubpaymentTotal("white") ? "$" + getLastSubpaymentTotal("white") : "No hay adelantos"}</p>
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
                     <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
                       Agregar adelanto
@@ -146,8 +152,17 @@ const Payment = () => {
               <div>
                 <Subtitle>Seccion B</Subtitle>
               </div>
-              <div>
-                <p className="text-xl">Último adelanto: {payment?.black?.payments[payment?.black?.payments.length - 1]?.checks?.length || "No hay adelantos"}</p>
+              <div className="flex w-full gap-8 justify-between items-center">
+                <div className="flex flex-col w-full gap-y-[10px]">
+                  <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("black")}</p>
+                  <div className="flex w-full gap-8 justify-between items-center">
+                    <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/b/new`}>
+                      <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
+                        Agregar adelanto
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

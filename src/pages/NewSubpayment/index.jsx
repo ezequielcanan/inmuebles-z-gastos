@@ -46,7 +46,7 @@ const NewSubpayment = () => {
   const onSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
     data.date = moment()
-    payment?.white?.bills.length && (data.retention = {amount: data.retention * payment?.white?.bills[0]?.amount / 100, code: data.retentionNumber})
+    payment?.white?.bills.length && (data.retention = { amount: data.retention, code: data.retentionNumber })
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
 
@@ -109,11 +109,11 @@ const NewSubpayment = () => {
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
-              {type == "a" &&
+              {type == "a" ? (
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
                     <>
-                      <Input register={{ ...register("retention") }} placeholder={"%"}>
+                      <Input register={{ ...register("retention") }} placeholder={"$"}>
                         <Label text={"Retencion:"} />
                       </Input>
                       <Input register={{ ...register("retentionNumber") }}>
@@ -177,8 +177,22 @@ const NewSubpayment = () => {
                     })}
                   </div>
                   <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers)}><FaPlus className="text-4xl cursor pointers" /></Button>
+                </>) : (
+                <>
+                  <SelectInput options={[{text:"Dolar", value: "dollar"}, {text: "Pesos", value: "pesos"}]} containerClassName={"!w-full"} className={"!w-full"} register={{...register("currency")}}>
+                    <Label text={"Moneda"} name={"currency"}/>
+                  </SelectInput>
+                  <Input containerClassName={"!w-full"} type="number" register={{ ...register("cashPaid") }}>
+                    <Label name={"cashPaid"} text={"Efectivo pagado:"} />
+                  </Input>
+                  <Input containerClassName={"!w-full"} type="number" register={{ ...register("dollarPrice") }}>
+                    <Label name={"dollarPrice"} text={"Precio del dolar:"} />
+                  </Input>
+                  <Input type="date" containerClassName={"!w-full"} register={{...register("date")}}>
+                    <Label name={"date"} text={"Fecha:"} />
+                  </Input>
                 </>
-              }
+              )}
               <Button className={"text-black"} type="submit" style="submit">Enter</Button>
             </Form>
           </Section>

@@ -11,7 +11,7 @@ const SubpaymentCard = ({payment, type}) => {
     <div>
       <p className="text-xl">Cheques totales: {payment?.checks?.length}</p>
       <p className="text-xl">Total en cheques: {checksTotal}</p>
-      <p className="text-xl">Retencion: {payment.retention ? "%" + payment.retention : 0}</p>
+      <p className="text-xl">Retencion: {payment.retention ? "$" + payment.retention?.amount : 0}</p>
       <p className="text-xl">Total pagado: {(payment?.cashPaid?.total || 0) + checksTotal}</p>
     </div>
   </Link>

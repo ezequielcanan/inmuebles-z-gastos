@@ -43,7 +43,12 @@ const NewSubpayment = () => {
     })
   }, [])
 
-  const onSubmit = handleSubmit(async data => {
+  const blackSubmit = handleSubmit(async data => {
+    const result = (await customAxios.post(`/black-payment/${pid}`, data)).data
+    navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
+  })
+
+  const whiteSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
     data.date = moment()
     payment?.white?.bills.length && (data.retention = { amount: data.retention, code: data.retentionNumber })
@@ -75,6 +80,8 @@ const NewSubpayment = () => {
     const paymentResult = (await customAxios.post(`/white-payment/${pid}`, data)).data
     navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
   })
+
+  const onSubmit = type == "a" ? whiteSubmit : blackSubmit
 
   const arrayIndex = (id, array = checks) => {
     return array.findIndex(a => a.id == id)

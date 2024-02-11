@@ -31,9 +31,7 @@ const Payment = () => {
     customAxios.get(`/payment/${pid}`).then(res1 => {
       customAxios.get(`/payment/budget/${res1?.data?.payload?.budget?._id}`).then(res => {
         const lastPayment = res?.data?.payload.find((p) => p?.paymentNumber == res1?.data?.payload?.paymentNumber - 1)
-        setWhiteBalance(lastPayment?.white?.payments?.reduce((acc, payment) => {
-          return acc + payment?.checks?.reduce((checkAcc, check) => check?.amount + checkAcc, payment?.cashPaid?.total)
-        }, 0))
+        setLastPayment(lastPayment)
       })
       setPayment(res1?.data?.payload || {})
     }).catch(e => {
@@ -43,10 +41,10 @@ const Payment = () => {
 
   const getSectionTotal = (type) => {
     const adjustment = (payment?.indexCac / payment?.budget?.baseIndex)
-    const mcd = ((lastPayment[type]?.amount * adjustment) - lastPayment[type]?.mcp) || 0
+    const mcd = lastPayment ? ((lastPayment[type]?.amount * adjustment) - lastPayment[type]?.mcp) : 0
     const mcp = payment[type]?.amount * (adjustment - 1)
     const total = mcd + mcp + payment[type]?.amount
-    const taxes = total * (payment[type]?.bills?.length ? ((payment[type]?.bills[0]?.bill?.iva + payment[type]?.bills[0]?.bill?.taxes) || 0) / 100 : 0) 
+    const taxes = total * (payment[type]?.bills?.length ? ((payment[type]?.bills[0]?.bill?.iva + payment[type]?.bills[0]?.bill?.taxes) || 0) / 100 : 0)
 
     return formatNumber((total + taxes) || 0)
   }
@@ -161,6 +159,11 @@ const Payment = () => {
                         Agregar adelanto
                       </Button>
                     </Link>
+                  </div>
+                  <div className="grid lg:grid-cols-2 gap-8">
+                    {payment?.black?.payments?.map((p, i) => {
+                      return <SubpaymentCard payment={p} type={"b"} key={i} />
+                    })}
                   </div>
                 </div>
               </div>

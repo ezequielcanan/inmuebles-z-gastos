@@ -43,22 +43,37 @@ const Subpayment = () => {
               Adelanto {moment(subpayment?.date).format("YYYY-MM-DD")}
             </Title>
           </Section>
-          <section className="flex flex-col items-start gap-y-[30px]">
-            <Subtitle>Cheques</Subtitle>
-            <div className="grid gap-8 lg:grid-cols-3">
-              {subpayment?.checks?.map((check,i) => {
-                return <CheckCard check={check} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} key={check._id}/>
-              })}
-            </div>
-          </section>
-          <section className="flex flex-col items-start gap-y-[30px]">
-            <Subtitle>Transferencias</Subtitle>
-            <div className="grid gap-8 lg:grid-cols-3">
-              {subpayment?.transfers?.map((transfer,i) => {
-                return <TransferCard transfer={transfer} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} key={transfer._id}/>
-              })}
-            </div>
-          </section>
+          {type == "a" ? (
+            <>
+              <section className="flex flex-col items-start gap-y-[30px]">
+                <Subtitle>Cheques</Subtitle>
+                <div className="grid gap-8 lg:grid-cols-3">
+                  {subpayment?.checks?.map((check, i) => {
+                    return <CheckCard check={check} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} key={check._id} />
+                  })}
+                </div>
+              </section>
+              <section className="flex flex-col items-start gap-y-[30px]">
+                <Subtitle>Transferencias</Subtitle>
+                <div className="grid gap-8 lg:grid-cols-3">
+                  {subpayment?.transfers?.map((transfer, i) => {
+                    return <TransferCard transfer={transfer} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} key={transfer._id} />
+                  })}
+                </div>
+              </section>
+            </>
+          ) : (
+            <section className="flex flex-col items-start gap-y-[30px]">
+              <Subtitle>
+                Pago en B
+              </Subtitle>
+              <div>
+                <p className="text-2xl">Pagado: {subpayment.currency == "dollar" ? "USD " : "$"}{subpayment?.cashPaid}</p>
+                <p className="text-2xl">Fecha: {moment.utc(subpayment?.date).format("DD-MM-YYYY")}</p>
+                <p className="text-2xl">Valor del dolar: {subpayment.dollarPrice}</p>
+              </div>
+            </section>
+          )}
         </>
       ) : (!subpayment || !payment) ? (
         <BounceLoader size={100} />

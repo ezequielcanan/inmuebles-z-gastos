@@ -17,6 +17,7 @@ import Button from "../../components/Button"
 import { formatNumber } from "../../utils/numbers"
 import SubpaymentCard from "../../components/SubpaymentCard"
 import SelectInput from "../../components/FormInput/SelectInput"
+import BillCard from "../../components/BilllCard"
 
 const Payment = () => {
   const { pid } = useParams()
@@ -25,7 +26,6 @@ const Payment = () => {
   const [lastPayment, setLastPayment] = useState(false)
   const [file, setFile] = useState(false)
   const [reloadFlag, setReloadFlag] = useState(false)
-  const [whiteBalance, setWhiteBalance] = useState(0)
 
   useEffect(() => {
     customAxios.get(`/payment/${pid}`).then(res1 => {
@@ -138,13 +138,23 @@ const Payment = () => {
                 <Input register={{ ...register("amount", { required: true }) }} placeholder={"Sin impuestos incluidos"} containerClassName={"!w-full border-b-black"} className={"!w-full"}>
                   <Label name={"amount"}>TOTAL:</Label>
                 </Input>
-                <SelectInput options={billOptions} containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>
+                <SelectInput options={billOptions} optionClassName={"!text-white"} containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>
                   <Label name={"concept"} text={"En concepto de:"} />
                 </SelectInput>
                 <Button className={"text-center justify-center max-w-[200px] w-[200px]"} type="submit">
                   Subir factura
                 </Button>
               </Form>
+              <div className="flex flex-col gap-y-[30px] self-start w-full">
+                <div className="self-start">
+                  <Subtitle>Facturas</Subtitle>
+                </div>
+                <div className="grid xl:grid-cols-2 gap-8 w-full">
+                  {payment?.white?.bills?.map((bill) => {
+                    return <BillCard bill={bill}/>
+                  })}
+                </div>
+              </div>
             </div>
             <div className="flex flex-col gap-y-[50px]">
               <div>

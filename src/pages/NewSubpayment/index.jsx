@@ -77,6 +77,7 @@ const NewSubpayment = () => {
 
     data.checks = checksResult.payload.map((c, i) => c._id)
     data.transfers = transferResult.payload.map((t, i) => t._id)
+    data.materials = {material: data.materialsMaterial, amount: data.materialsAmount, date: data.materialsDate} 
     const paymentResult = (await customAxios.post(`/white-payment/${pid}`, data)).data
     navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
   })
@@ -127,6 +128,11 @@ const NewSubpayment = () => {
                         <Label text={"Numero de retencion:"} />
                       </Input>
                     </>}
+                  <Input className={"!w-full max-w-[250px]"} placeholder={"TOTAL"} register={{...register("materialsAmount")}}>
+                    <Label text={"Materiales"} name={"materialsAmount"}/>
+                    <Input placeholder={"Material"} register={{...register("materialsMaterial")}} className={"max-w-[300px]"}/>
+                    <Input type="date" register={{...register("materialsDate")}}/>
+                  </Input>
                   <h2 className="text-2xl md:text-4xl font-ubuntu">Cheques</h2>
                   <div className="flex flex-col gap-y-[70px]">
                     {checks.map((check, i) => {

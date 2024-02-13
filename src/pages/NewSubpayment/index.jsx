@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { FaPlus, FaFileArrowUp } from "react-icons/fa6"
 import { RiSubtractFill } from "react-icons/ri"
@@ -14,6 +14,7 @@ import Label from "../../components/Label"
 import Button from "../../components/Button"
 import { useForm } from "react-hook-form"
 import Input from "../../components/FormInput/Input"
+import { FaChevronLeft } from "react-icons/fa"
 
 const NewSubpayment = () => {
   const { pid, bid, type } = useParams()
@@ -112,7 +113,10 @@ const NewSubpayment = () => {
     <Main className={"grid items-center gap-4 justify-center"} paddings>
       {(payment && payment != "error") ? (
         <>
-          <Section>
+          <Section className={"gap-x-[40px] items-center"}>
+            <Link to={`/budgets/${bid}/payments/${pid}`}>
+              <FaChevronLeft className="text-4xl"/>
+            </Link>
             <Title>Adelanto {type.toUpperCase()} - Pago {payment?.paymentNumber} - Presupuesto {payment?.budget?.title || payment?.budget?.supplier?.name}</Title>
           </Section>
           <Section style="form" className={"w-full"}>

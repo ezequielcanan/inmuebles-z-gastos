@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { BounceLoader } from "react-spinners"
-import { FaDownload, FaFileArrowUp, FaFileCircleCheck, FaNoteSticky } from "react-icons/fa6"
+import { FaChevronLeft, FaDownload, FaFileArrowUp, FaFileCircleCheck, FaNoteSticky } from "react-icons/fa6"
 import { useForm } from "react-hook-form"
 import moment from "moment"
 import Form from "../../components/Form"
@@ -20,7 +20,7 @@ import SelectInput from "../../components/FormInput/SelectInput"
 import BillCard from "../../components/BilllCard"
 
 const Payment = () => {
-  const { pid } = useParams()
+  const { pid, bid } = useParams()
   const { register, handleSubmit, reset } = useForm()
   const [payment, setPayment] = useState(false)
   const [lastPayment, setLastPayment] = useState(false)
@@ -79,6 +79,9 @@ const Payment = () => {
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
+      <Link to={`/budgets/${bid}`}>
+        <FaChevronLeft className="text-4xl"/>
+      </Link>
       {(payment && payment != "error") ? (
         <>
           <Section>
@@ -151,7 +154,7 @@ const Payment = () => {
                 </div>
                 <div className="grid xl:grid-cols-2 gap-8 w-full">
                   {payment?.white?.bills?.map((bill) => {
-                    return <BillCard bill={bill}/>
+                    return <BillCard bill={bill} path={`/budgets/${bid}/payments/${pid}/${bill?.bill?._id}`}/>
                   })}
                 </div>
               </div>

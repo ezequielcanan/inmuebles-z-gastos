@@ -12,7 +12,7 @@ import { formatNumber } from "../../utils/numbers"
 import Button from "../../components/Button"
 import PaymentCard from "../../components/PaymentCard"
 import Note from "../../components/Note"
-import { FaDownload, FaNoteSticky } from "react-icons/fa6"
+import { FaChevronLeft, FaDownload, FaNoteSticky } from "react-icons/fa6"
 
 const Budget = () => {
   const { bid } = useParams()
@@ -41,6 +41,9 @@ const Budget = () => {
 
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
+      <Link to={"/budgets"}>
+        <FaChevronLeft className="text-4xl"/> 
+      </Link>
       {(budget && budget != "error" && payments) ? (
         <>
           <Section>

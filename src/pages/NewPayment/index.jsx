@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { BounceLoader } from "react-spinners"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { GiMoneyStack } from "react-icons/gi"
 import { useForm } from "react-hook-form"
 import { FaFileArrowUp } from "react-icons/fa6"
@@ -16,6 +16,7 @@ import Input from "../../components/FormInput/Input"
 import Label from "../../components/Label"
 import Button from "../../components/Button"
 import axios from "axios"
+import { FaChevronLeft } from "react-icons/fa"
 
 const NewPayment = () => {
   const { bid } = useParams()
@@ -48,8 +49,8 @@ const NewPayment = () => {
     data.budget = budget?._id
     data.budget = budget
 
-    data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1  
-    
+    data.paymentNumber = (budget?.lastPayment?.paymentNumber + 1) || 1
+
     const result = (await customAxios.post("/payment", data)).data
     const updateResult = (await customAxios.put(`/budget/${budget?._id}`, { lastPayment: result?.payload?._id, advanced: budget?.advanced + data.total })).data
     data.folder = `projects/${budget?.project?._id}/budgets/${result?.payload?.budget}/payments/${result?.payload?._id}`
@@ -70,9 +71,14 @@ const NewPayment = () => {
       {budget && budget != "error" ? (
         <>
           <Section className={"!flex-col"}>
-            <Title className={"text-center xl:text-start"}>
-              Presupuesto {budget?.code || moment.utc(budget?.date).format("YYYY-MM-DD")}: {budget?.supplier?.name} - {budget?.project?.title}
-            </Title>
+            <div className="flex items-center gap-x-[40px]">
+              <Link to={`/budgets/${bid}`}>
+                <FaChevronLeft className="text-4xl" />
+              </Link>
+              <Title className={"text-center xl:text-start"}>
+                Presupuesto {budget?.code || moment.utc(budget?.date).format("YYYY-MM-DD")}: {budget?.supplier?.name} - {budget?.project?.title}
+              </Title>
+            </div>
             <Subtitle className={"md:text-5xl"}>
               Nuevo pago
             </Subtitle>
@@ -83,7 +89,7 @@ const NewPayment = () => {
               {budget?.paymentType == "advance" ? (
                 <Input type="number" className="!max-w-[300px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
-                  <SelectInput register={{...register("advanceMethod")}} options={[{text: "%", value: "percentage"}, {text: "$", value: "money"}]}/>
+                  <SelectInput register={{ ...register("advanceMethod") }} options={[{ text: "%", value: "percentage" }, { text: "$", value: "money" }]} />
                 </Input>
               ) : null}
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>

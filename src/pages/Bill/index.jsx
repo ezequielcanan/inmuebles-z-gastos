@@ -14,13 +14,14 @@ import moment from "moment";
 import BalanceNoteCard from "../../components/BalanceNoteCard";
 import Input from "../../components/FormInput/Input";
 import Label from "../../components/Label";
+import Form from "../../components/Form"
 
 const Bill = () => {
   const { billId, bid, pid } = useParams();
-  const { register, getValues, handleSubmit } = useForm()
+  const { register, getValues, handleSubmit, setValue } = useForm()
   const [bill, setBill] = useState();
   const [edit, setEdit] = useState(false)
-  const [refresh, setRefresh] = useState(false)
+  const [values, setValues] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -53,9 +54,9 @@ const Bill = () => {
   })
 
   const getTotalByInputs = () => {
-    const iva = Number(getValues("iva"))
-    const taxes = Number(getValues("taxes"))
-    const amount = Number(getValues("amount"))
+    const iva = values["iva"]
+    const taxes = values["taxes"]
+    const amount = values["amount"]
     return amount * (1 + (iva + taxes) / 100)
   }
 
@@ -73,27 +74,32 @@ const Bill = () => {
           <section className="flex flex-col gap-y-[30px] items-start">
             <div className="flex items-center gap-x-16">
               <Subtitle>Datos</Subtitle>
-              <FaEdit className="text-4xl cursor-pointer" onClick={() => setEdit(!edit)} />
+              <FaEdit className="text-4xl cursor-pointer" onClick={() => {
+                setEdit(!edit)
+                setValues({...bill})
+              }} />
             </div>
-            <div className="flex gap-x-[20px] items-center bg-secondary p-4">
-              <Input className="!text-2xl" defaultValue={bill?.amount} type="number" register={{ ...register("amount") }} onChange={() => setRefresh(!refresh)}>
-                <Label name={"amount"} text={"Neto:"} className={"!text-2xl"} />
-              </Input>
-            </div>
-            <div className="flex gap-x-[20px] items-center bg-secondary p-4">
-              <Input className="!text-2xl" defaultValue={bill?.iva} type="number" register={{ ...register("iva") }} onChange={() => setRefresh(!refresh)}>
-                <Label name={"iva"} text={"IVA:"} className={"!text-2xl"} />
-              </Input>
-              <p className="text-2xl">{formatNumber(bill?.amount * bill?.iva / 100)}</p>
-            </div>
-            <div className="flex gap-x-[20px] items-center bg-secondary p-4">
-              <Input className="!text-2xl" defaultValue={bill?.taxes} register={{ ...register("taxes") }} onChange={() => setRefresh(!refresh)}>
-                <Label name={"taxes"} text={"Impuestos:"} className={"!text-2xl"} />
-              </Input>
-              <p className="text-2xl">{formatNumber(bill?.amount * bill?.taxes / 100)}</p>
-            </div>
-            <p className="text-2xl font-bold">Total: ${formatNumber(!edit ? (bill?.amount * (1 + (bill?.iva + bill?.taxes) / 100)) : getTotalByInputs())}</p>
-            {edit && <Button type="submit" className={"border-4 rounded border-black"} style="submit">Confirmar</Button>}
+            <Form onSubmit={onSubmitUpdate} className={"flex items-start"}>
+              <div className="flex gap-x-[20px] items-center bg-secondary p-4">
+                <Input className="!text-2xl" defaultValue={bill?.amount} type="number" disabled={!edit} register={{ ...register("amount") }} onChange={(e) => setValues({ ...values, amount: Number(e.target?.value) })}>
+                  <Label name={"amount"} text={"Neto:"} className={"!text-2xl"} />
+                </Input>
+              </div>
+              <div className="flex gap-x-[20px] items-center bg-secondary p-4">
+                <Input className="!text-2xl" defaultValue={bill?.iva} type="number" disabled={!edit} register={{ ...register("iva") }} onChange={(e) => setValues({ ...values, iva: Number(e.target?.value) })}>
+                  <Label name={"iva"} text={"IVA:"} className={"!text-2xl"} />
+                </Input>
+                <p className="text-2xl">{formatNumber(bill?.amount * bill?.iva / 100)}</p>
+              </div>
+              <div className="flex gap-x-[20px] items-center bg-secondary p-4">
+                <Input className="!text-2xl" defaultValue={bill?.taxes} disabled={!edit} register={{ ...register("taxes") }} onChange={(e) => setValues({ ...values, taxes: Number(e.target?.value) })}>
+                  <Label name={"taxes"} text={"Impuestos:"} className={"!text-2xl"} />
+                </Input>
+                <p className="text-2xl">{formatNumber(bill?.amount * bill?.taxes / 100)}</p>
+              </div>
+              <p className="text-2xl font-bold">Total: ${formatNumber(!edit ? (bill?.amount * (1 + (bill?.iva + bill?.taxes) / 100)) : getTotalByInputs())}</p>
+              {edit && <Button type="submit" className={"border-4 rounded border-black"} style="submit">Confirmar</Button>}
+            </Form>
           </section>
           <section className="flex flex-col gap-y-[30px] items-start">
             <Subtitle>Notas de crédito/débito</Subtitle>

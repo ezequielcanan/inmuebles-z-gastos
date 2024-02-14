@@ -95,6 +95,9 @@ const NewPayment = () => {
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>
                 <Label name={"indexCac"} text={"Indice CAC:"} />
               </Input>
+              <Input placeholder={"%"} type="number" register={{ ...register("balanceAdjustment") }}>
+                <Label name={"balanceAdjustment"} text={"Ajuste saldo pendiente:"} />
+              </Input>
               <Input type="file" className={"hidden"} id="file" multiple="multiple" onChange={(e) => setFiles(e.target?.files)}>
                 <p className="font-ubuntu md:text-4xl">Archivos</p>
                 <Label name={"file"} className={"py-4 px-4 flex w-full justify-end cursor-pointer text-center"}>

@@ -3,7 +3,7 @@ import customAxios from "../../config/axios.config"
 import moment from "moment"
 import { FaFileDownload } from "react-icons/fa"
 
-const TransferCard = ({transfer, thumbnail, anchorThumbnail}) => {
+const TransferCard = ({transfer, thumbnail, anchorThumbnail, payment}) => {
   const [documentSrc, setDocumentSrc] = useState(false)
   console.log("ttas")
   useEffect(() => {

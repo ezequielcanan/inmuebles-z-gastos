@@ -34,7 +34,7 @@ const Subpayment = () => {
       setPayment("error");
     });
   }, [])
-  console.log(subpayment)
+  
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <Link to={`/budgets/${bid}/payments/${pid}`}>
@@ -53,7 +53,7 @@ const Subpayment = () => {
                 <Subtitle>Cheques</Subtitle>
                 <div className="grid gap-8 lg:grid-cols-3">
                   {subpayment?.checks?.map((check, i) => {
-                    return <CheckCard check={check} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} key={check._id} />
+                    return <CheckCard check={check} payment={payment} setSubpayment={setSubpayment} sid={sid} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/checks/${check?._id}`} key={check._id} />
                   })}
                 </div>
               </section>
@@ -61,7 +61,7 @@ const Subpayment = () => {
                 <Subtitle>Transferencias</Subtitle>
                 <div className="grid gap-8 lg:grid-cols-3">
                   {subpayment?.transfers?.map((transfer, i) => {
-                    return <TransferCard transfer={transfer} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} key={transfer._id} />
+                    return <TransferCard transfer={transfer} payment={payment} thumbnail={`/public/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/transfers/${transfer?._id}`} key={transfer._id} />
                   })}
                 </div>
               </section>

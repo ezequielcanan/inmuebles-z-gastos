@@ -12,12 +12,13 @@ const SubpaymentCard = ({ payment, type }) => {
     <div>
       {type == "a" ? (
         <>
-          <p className="text-xl">Cheques totales: {payment?.checks?.length}</p>
-          <p className="text-xl">Total en cheques: {checksTotal}</p>
-          <p className="text-xl">Retencion: {payment.retention ? "$" + payment.retention?.amount : 0}</p>
+          <p className="text-xl">Cheques: {payment?.checks?.length} / ${checksTotal}</p>
+          <p className="text-xl">Transferencias: {payment?.transfers?.length} / ${transfersTotal}</p>
+          {payment?.retention?.amount && <p className="text-xl">Retencion: {payment.retention ? "$" + payment.retention?.amount : 0}</p>}
         </>
       ) : null}
-      <p className="text-xl">Total pagado: {type == "a" ? checksTotal + transfersTotal : `${payment?.currency == "dollar" ? "USD" : "$"}${payment?.cashPaid}`}</p>
+      {payment?.materials?.amount && <p className="text-xl">{payment?.materials?.material}: ${payment?.materials?.amount}</p>}
+      <p className="text-xl">Total pagado: {type == "a" ? "$" + (checksTotal + transfersTotal + (payment?.materials?.amount || 0) + (payment?.retention?.amount || 0)) : `${payment?.currency == "dollar" ? "USD" : "$"}${payment?.cashPaid}`}</p>
     </div>
   </Link>
 }

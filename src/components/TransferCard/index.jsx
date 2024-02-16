@@ -5,10 +5,8 @@ import { FaFileDownload } from "react-icons/fa"
 
 const TransferCard = ({transfer, thumbnail, anchorThumbnail, payment}) => {
   const [documentSrc, setDocumentSrc] = useState(false)
-  console.log("ttas")
   useEffect(() => {
     customAxios.patch(`/transfer/file`, {thumbnail}).then(res => {
-      console.log(res.data.payload)
       setDocumentSrc(res?.data?.payload[0] || "")
     })
   }, [])

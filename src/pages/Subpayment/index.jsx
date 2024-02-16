@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Main from "../../containers/Main";
 import Section from "../../containers/Section";
 import { BounceLoader } from "react-spinners";
@@ -9,10 +9,14 @@ import moment from "moment";
 import Title from "../../components/Title";
 import CheckCard from "../../components/CheckCard";
 import TransferCard from "../../components/TransferCard";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaEdit } from "react-icons/fa";
+import Form from "../../components/Form";
+import Input from "../../components/FormInput/Input";
+import { useForm } from "react-hook-form";
 
 const Subpayment = () => {
   const { pid, bid, sid, type } = useParams();
+  const location = useLocation()
   const [payment, setPayment] = useState(false)
   const [subpayment, setSubpayment] = useState(false);
 
@@ -34,11 +38,11 @@ const Subpayment = () => {
       setPayment("error");
     });
   }, [])
-  
+
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <Link to={`/budgets/${bid}/payments/${pid}`}>
-        <FaChevronLeft className="text-4xl"/>
+        <FaChevronLeft className="text-4xl" />
       </Link>
       {(subpayment && subpayment != "error" && payment && payment != "error") ? (
         <>
@@ -46,6 +50,9 @@ const Subpayment = () => {
             <Title>
               Adelanto {moment(subpayment?.date).format("YYYY-MM-DD")}
             </Title>
+            <Link to={`${location.pathname}/edit`}>
+              <FaEdit className="text-4xl" />
+            </Link>
           </Section>
           {type == "a" ? (
             <>

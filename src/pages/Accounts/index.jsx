@@ -7,6 +7,7 @@ import { Link } from "react-router-dom"
 import Button from "../../components/Button"
 import { FaPlus } from "react-icons/fa"
 import Section from "../../containers/Section"
+import AccountCard from "../../components/AccountCard"
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState(false)
@@ -27,12 +28,12 @@ const Accounts = () => {
           <Button>Agregar Cuenta <FaPlus/></Button>
         </Link>
       </Section>
-      <section>
+      <section className="grid lg:grid-cols-4 sm:grid-cols-2 gap-6">
         {accounts ? (
           <>
             {accounts.length ? (
               accounts.map((account,i) => {
-                return <></>
+                return <AccountCard account={account} key={i}/>
               })
             ) : (
               <h2>No hay proveedores registrados</h2>

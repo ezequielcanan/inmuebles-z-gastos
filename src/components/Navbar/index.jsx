@@ -26,8 +26,6 @@ const Navbar = ({ user, setUser }) => {
       title: "Banco",
       data: [
         { text: "Cuentas", to: "/accounts", logo: MdAccountBalanceWallet },
-        { text: "Facturas", to: "/bills", logo: FaTicketAlt },
-        { text: "Cheques", to: "/checks", logo: FaMoneyCheckAlt },
       ]
     }
   ]

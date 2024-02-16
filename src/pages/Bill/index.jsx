@@ -8,7 +8,7 @@ import Section from "../../containers/Section";
 import Subtitle from "../../components/Subtitle";
 import Button from "../../components/Button"
 import { formatNumber } from "../../utils/numbers";
-import { FaChevronLeft, FaEdit, FaPlusCircle, FaTrashAlt } from "react-icons/fa";
+import { FaChevronLeft, FaEdit, FaFileDownload, FaPlusCircle, FaTrashAlt } from "react-icons/fa";
 import { useForm } from "react-hook-form"
 import moment from "moment";
 import BalanceNoteCard from "../../components/BalanceNoteCard";
@@ -34,8 +34,6 @@ const Bill = () => {
         setBill("error");
       });
   }, [edit]);
-
-
 
   const deleteBill = async () => {
     await customAxios.delete(`/bill/${billId}/${pid}`)
@@ -69,7 +67,12 @@ const Bill = () => {
           </Link>
           <Section>
             <Title>Factura Código: {bill?.code}</Title>
-            <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />
+            <div className="flex gap-x-[20px] items-center">
+              <a href="" download>
+                <FaFileDownload className="text-5xl text-cyan-600"/>
+              </a>
+              <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />              
+            </div>
           </Section>
           <section className="flex flex-col gap-y-[30px] items-start">
             <div className="flex items-center gap-x-16">

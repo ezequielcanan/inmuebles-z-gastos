@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Main from "../../containers/Main"
 import customAxios from "../../config/axios.config"
+import Form from "../../components/Form"
 import { Link, useParams } from "react-router-dom"
 import Section from "../../containers/Section"
 import Title from "../../components/Title"
@@ -12,12 +13,17 @@ import { formatNumber } from "../../utils/numbers"
 import Button from "../../components/Button"
 import PaymentCard from "../../components/PaymentCard"
 import Note from "../../components/Note"
+import SelectInput from "../../components/FormInput/SelectInput"
+import Input from "../../components/FormInput/Input"
 import { FaChevronLeft, FaDownload, FaNoteSticky } from "react-icons/fa6"
 
 const Budget = () => {
   const { bid } = useParams()
   const [budget, setBudget] = useState(false)
   const [payments, setPayments] = useState(false)
+  const [apartments, setApartments] = useState([])
+  const [choice, setChoice] = useState({})
+  const [projects, setProjects] = useState([])
   const [reload, setReload] = useState(false)
 
   useEffect(() => {
@@ -29,29 +35,79 @@ const Budget = () => {
   }, [reload])
 
   useEffect(() => {
+    customAxios.get("/projects?filter=false").then(res => {
+      customAxios.get(`/apartments/project/${res?.data?.payload[0]?._id}`).then(apartmentsRes => {
+        const projectApartments = apartmentsRes?.data?.payload
+        setChoice({project: res?.data?.payload[0]?._id, apartment: projectApartments[0]?._id, apartments: mapApartments(projectApartments), dollar: 0, total: 0, subtractType: "quota"})
+        setApartments(projectApartments)
+      })
+
+      setProjects(res?.data?.payload.map((project => {
+        return { text: project.title, value: project._id }
+      })) || [])
+    }).catch(e => {
+      setProjects([])
+    })
+  }, [])
+
+  useEffect(() => {
     customAxios.get(`/payment/budget/${bid}`).then(res => {
       setPayments(res?.data?.payload || [])
     })
   }, [reload])
 
+  const onSubmit = async () => {
+    const data = {supplier: budget?.supplier, apartment: choice, bid}
+    const result = (await customAxios.post("/transaction/budget", data)).data
+    setReload(!reload)
+  }
+
+  const mapApartments = apartments => {
+    return apartments.map((a, i) => {
+      return {
+        value: a?._id,
+        text: a?.unit
+      }
+    })
+  }
+
+  const onChangePropertiesApartment = (property, newValue) => {
+    const updateObject = {}
+    updateObject[property] = newValue
+    setChoice({...choice, ...updateObject})
+  }
+
+  const onChangeProject = async (pid) => {
+    if (projects) {
+      try {
+        const apartments = (await customAxios.get(`/apartments/project/${pid}`))?.data?.payload
+        setApartments(apartments)
+        setChoice({...choice, apartment: apartments[0]?._id, apartments: mapApartments(apartments), project: pid})
+      }
+      catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
   const addNote = async () => {
-    const result = (await customAxios.post(`/budget/${bid}/notes`, {date: moment(), note: ""})).data
+    const result = (await customAxios.post(`/budget/${bid}/notes`, { date: moment(), note: "" })).data
     setBudget(result?.payload)
   }
 
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
       <Link to={"/budgets"}>
-        <FaChevronLeft className="text-4xl"/> 
+        <FaChevronLeft className="text-4xl" />
       </Link>
-      {(budget && budget != "error" && payments) ? (
+      {(budget && budget != "error" && payments && projects && apartments) ? (
         <>
           <Section>
             <Title className={"text-center xl:text-start"}>
               Presupuesto {budget?.title || budget?.code || budget?.date}: {budget?.supplier?.name} - {budget?.project?.title}
             </Title>
             <Link to={`/budgets/${budget?._id}/payments/new`}>
-              <Button>Pagar cuota</Button>
+              <Button>Agregar Certificado</Button>
             </Link>
           </Section>
           <section className="flex flex-col items-start gap-y-[30px]">
@@ -78,8 +134,18 @@ const Budget = () => {
                 <Subtitle className={"w-full sm:w-auto"}>Departamentos entregados:</Subtitle>
                 <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
                   {budget?.paidApartments.map(((apartment, i) => {
+                    console.log(apartment)
                     return <ApartmentCard key={i} transaction={apartment?.apartment} subtractionType={apartment?.discount} />
                   }))}
+                  <Form className={"bg-primary p-4 gap-y-2"} onSubmit={onSubmit}>
+                    <h3 className="text-center text-white text-xl">Nuevo departamento</h3>
+                    <SelectInput options={[{ value: "quota", text: "Por cuota" }, { value: "total", text: "Al total" }]} value={choice?.subtractType} className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value)} />
+                    <SelectInput options={choice?.apartments} prop className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} value={choice?.apartment} onChange={(e) => onChangePropertiesApartment("apartment", e?.currentTarget?.value)} />
+                    <SelectInput options={projects} className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} value={choice?.project} onChange={(e) => onChangeProject(e?.currentTarget?.value)} />
+                    <Input placeholder={"Equivalente a:"} type="number" value={choice?.total || ""} onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value))} className={"!w-full text-white !text-sm"} />
+                    <Input placeholder={"Valor USD"} type="number" value={choice?.dollar || ""} className={"!w-full text-white !text-sm"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value))} />
+                    <Button type="submit" style="submit" className={"text-black !text-lg !py-1"}>Agregar depto</Button>
+                  </Form>
                 </div>
               </>
             ) : null}
@@ -87,7 +153,12 @@ const Budget = () => {
           <section className="flex flex-col items-start gap-y-[30px]">
             <div className="flex w-full justify-between items-center">
               <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
-              <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl"><FaDownload/></a>
+              <Button>
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl flex gap-x-4">A <FaDownload /></a>
+              </Button>
+              <Button>
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/b/${budget?._id}`} download className="text-3xl flex gap-x-4">B <FaDownload /></a>
+              </Button>
             </div>
             <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
               {payments.length ? payments?.map((payment, i) => {
@@ -100,10 +171,10 @@ const Budget = () => {
             <div className="flex flex-col gap-y-[10px] w-full">
               {budget?.notes?.length ? budget?.notes?.map((note, i) => {
                 console.log(note.note)
-                return <Note note={note} id={bid} setReload={setReload} key={note._id}/>
+                return <Note note={note} id={bid} setReload={setReload} key={note._id} />
               }) : <p>No hay notas registradas</p>}
               <Button className={"bg-blue-500 after:bg-blue-700 self-start"} onClick={addNote}>
-                Agregar nota <FaNoteSticky/>
+                Agregar nota <FaNoteSticky />
               </Button>
             </div>
           </section>

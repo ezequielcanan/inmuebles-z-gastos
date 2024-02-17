@@ -29,6 +29,9 @@ const NewAccount = () => {
       <Section style="form">
         <MdAccountBalanceWallet className="text-[100px] md:text-[180px]" />
         <Form onSubmit={onSubmit}>
+          <Input register={{...register("society")}}>
+            <Label name={"society"} text={"Sociedad:"}/>
+          </Input>
           <Input register={{...register("cbu")}}>
             <Label name={"cbu"} text={"CBU:"}/>
           </Input>

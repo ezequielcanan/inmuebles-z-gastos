@@ -52,7 +52,7 @@ const NewSubpayment = () => {
 
   const whiteSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
-    data.date = moment()
+    data.date = data.date || moment()
     payment?.white?.bills.length && (data.retention = { amount: data.retention, code: data.retentionNumber })
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
@@ -100,10 +100,13 @@ const NewSubpayment = () => {
             <Link to={`/budgets/${bid}/payments/${pid}`}>
               <FaChevronLeft className="text-4xl"/>
             </Link>
-            <Title>Adelanto {type.toUpperCase()} - Pago {payment?.paymentNumber} - Presupuesto {payment?.budget?.title || payment?.budget?.supplier?.name}</Title>
+            <Title>Pago {type.toUpperCase()} - Certificado {payment?.paymentNumber} - Presupuesto {payment?.budget?.title || payment?.budget?.supplier?.name}</Title>
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
+              <Input type="date" containerClassName={"!w-full"} register={{...register("date")}}>
+                <Label name={"date"} text={"Fecha:"} />
+              </Input>
               {type == "a" ? (
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
@@ -137,9 +140,6 @@ const NewSubpayment = () => {
                   </Input>
                   <Input containerClassName={"!w-full"} type="number" register={{ ...register("dollarPrice") }}>
                     <Label name={"dollarPrice"} text={"Precio del dolar:"} />
-                  </Input>
-                  <Input type="date" containerClassName={"!w-full"} register={{...register("date")}}>
-                    <Label name={"date"} text={"Fecha:"} />
                   </Input>
                 </>
               )}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { BounceLoader } from "react-spinners"
 import { FaChevronLeft, FaDownload, FaFileArrowUp, FaFileCircleCheck, FaNoteSticky } from "react-icons/fa6"
+import { FaTrashAlt } from "react-icons/fa"
 import { useForm } from "react-hook-form"
 import moment from "moment"
 import Form from "../../components/Form"
@@ -27,6 +28,8 @@ const Payment = () => {
   const [file, setFile] = useState(false)
   const [reloadFlag, setReloadFlag] = useState(false)
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     customAxios.get(`/payment/${pid}`).then(res1 => {
       customAxios.get(`/payment/budget/${res1?.data?.payload?.budget?._id}`).then(res => {
@@ -39,14 +42,22 @@ const Payment = () => {
     })
   }, [reloadFlag])
 
-  const getSectionTotal = (type) => {
+  const getSectionTotal = (type, percentage) => {
+    const lastAdjustment = (lastPayment?.indexCac / payment?.budget?.baseIndex)
     const adjustment = (payment?.indexCac / payment?.budget?.baseIndex)
-    const mcd = lastPayment ? ((lastPayment[type]?.amount * adjustment) - lastPayment[type]?.mcp) : 0
+    const mcd = lastPayment ? lastPayment[type]?.mcd - lastPayment[type]?.mcp : 0
     const mcp = payment[type]?.amount * (adjustment - 1)
     const total = mcd + mcp + payment[type]?.amount
     const taxes = total * (payment[type]?.bills?.length ? ((payment[type]?.bills[0]?.bill?.iva + payment[type]?.bills[0]?.bill?.taxes) || 0) / 100 : 0)
+    
+    const lastDiscountByApartments = (lastPayment?.discountByApartments * percentage / 100) || 0
+    const apartmentsMcp = lastPayment ? lastDiscountByApartments * (lastAdjustment - 1)  : 0
+    const apartmentsMcd = lastPayment ? lastDiscountByApartments * (adjustment - 1) - apartmentsMcp : 0
+    const discountByApartments = ((payment?.discountByApartments * percentage / 100) || 0)
 
-    return formatNumber((total + taxes) || 0)
+
+    const balance = total + taxes - apartmentsMcd - discountByApartments - discountByApartments * (adjustment - 1)
+    return formatNumber((balance) || 0)
   }
 
   const addNote = async () => {
@@ -68,11 +79,10 @@ const Payment = () => {
     setReloadFlag(!reloadFlag)
     setFile(false)
   })
-
-  const getLastSubpaymentTotal = (type) => {
-    const subPayment = payment[type]?.payments[payment[type]?.payments.length - 1]
-    const total = subPayment?.checks?.reduce((acc, check) => check.amount + acc, 0)
-    return total || 0
+  
+  const deletePayment = async () => {
+    const result = (await customAxios.delete(`/payment/${pid}`)).data
+    navigate(`/budgets/${bid}`)
   }
 
   const billOptions = [{ text: "Certficado", value: "certificate" }, { text: "MCD", value: "mcd" }, { text: "MCP", value: "mcp" }]
@@ -88,11 +98,14 @@ const Payment = () => {
             <Title>
               Pago {payment?.paymentNumber} - {payment?.budget?.supplier?.name}
             </Title>
-            <a href={`${import.meta.env.VITE_REACT_API_URL}/api/payment/excel/${payment?._id}`} download>
-              <Button style="icon" className={"text-white w-16 h-16"}>
-                <FaDownload className="text-5xl p-1" />
-              </Button>
-            </a>
+            <div className="flex items-center gap-x-8 text-5xl">
+              <a href={`${import.meta.env.VITE_REACT_API_URL}/api/payment/excel/${payment?._id}`} download>
+                <Button style="icon" className={"text-white w-16 h-16"}>
+                  <FaDownload className="p-1" />
+                </Button>
+              </a>
+              {payment?.budget?.lastPayment?._id == payment?._id && <FaTrashAlt className="text-primary cursor-pointer" onClick={deletePayment}/>}
+            </div>
           </Section>
           <section className="flex">
 
@@ -103,11 +116,11 @@ const Payment = () => {
                 <Subtitle>Seccion A</Subtitle>
               </div>
               <div className="flex flex-col gap-y-[10px]">
-                <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("white")}</p>
+                <p className="text-2xl font-bold">SALDO A PAGAR: ${getSectionTotal("white", payment?.budget?.percentage)}</p>
                 <div className="flex w-full gap-8 justify-between items-center">
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
                     <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
-                      Agregar adelanto
+                      Agregar pago
                     </Button>
                   </Link>
                 </div>
@@ -165,11 +178,11 @@ const Payment = () => {
               </div>
               <div className="flex w-full gap-8 justify-between items-center">
                 <div className="flex flex-col w-full gap-y-[10px]">
-                  <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("black")}</p>
+                  <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("black", (100 - payment?.budget?.percentage))}</p>
                   <div className="flex w-full gap-8 justify-between items-center">
                     <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/b/new`}>
                       <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
-                        Agregar adelanto
+                        Agregar pago
                       </Button>
                     </Link>
                   </div>

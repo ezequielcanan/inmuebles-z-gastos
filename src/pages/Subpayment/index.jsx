@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Main from "../../containers/Main";
 import Section from "../../containers/Section";
 import { BounceLoader } from "react-spinners";
@@ -9,16 +9,18 @@ import moment from "moment";
 import Title from "../../components/Title";
 import CheckCard from "../../components/CheckCard";
 import TransferCard from "../../components/TransferCard";
-import { FaChevronLeft, FaEdit } from "react-icons/fa";
+import { FaChevronLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
 import Form from "../../components/Form";
 import Input from "../../components/FormInput/Input";
 import { useForm } from "react-hook-form";
+import Button from "../../components/Button";
 
 const Subpayment = () => {
   const { pid, bid, sid, type } = useParams();
-  const location = useLocation()
   const [payment, setPayment] = useState(false)
   const [subpayment, setSubpayment] = useState(false);
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     customAxios
@@ -39,6 +41,11 @@ const Subpayment = () => {
     });
   }, [])
 
+  const deleteSubpayment = async () => {
+    const result = (await customAxios.delete(`/${type == "a" ? "white-payment" : "black-payment"}/${pid}/${sid}`)).data
+    navigate(`/budgets/${bid}/payments/${pid}`)
+  }
+
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <Link to={`/budgets/${bid}/payments/${pid}`}>
@@ -48,11 +55,14 @@ const Subpayment = () => {
         <>
           <Section>
             <Title>
-              Adelanto {moment(subpayment?.date).format("YYYY-MM-DD")}
+              Adelanto {moment.utc(subpayment?.date).format("DD-MM-YYYY")}
             </Title>
-            <Link to={`${location.pathname}/edit`}>
-              <FaEdit className="text-4xl" />
-            </Link>
+            <div className="flex gap-x-8 items-center text-4xl">
+              <Link to={`${location.pathname}/edit`}>
+                <FaEdit/>
+              </Link>
+              <FaTrashAlt className="text-primary cursor-pointer" onClick={deleteSubpayment}/>
+            </div>
           </Section>
           {type == "a" ? (
             <>

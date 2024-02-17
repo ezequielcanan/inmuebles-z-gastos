@@ -86,6 +86,9 @@ const NewPayment = () => {
           <Section style="form">
             <GiMoneyStack className="text-[100px] md:text-[180px]" />
             <Form onSubmit={onSubmit}>
+              <Input type="date" register={{ ...register("date") }}>
+                <Label name={"date"} text={"Fecha:"} />
+              </Input>
               {budget?.paymentType == "advance" ? (
                 <Input type="number" className="!max-w-[300px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
@@ -94,9 +97,6 @@ const NewPayment = () => {
               ) : null}
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>
                 <Label name={"indexCac"} text={"Indice CAC:"} />
-              </Input>
-              <Input placeholder={"%"} type="number" register={{ ...register("balanceAdjustment") }}>
-                <Label name={"balanceAdjustment"} text={"Ajuste saldo pendiente:"} />
               </Input>
               <Input type="file" className={"hidden"} id="file" multiple="multiple" onChange={(e) => setFiles(e.target?.files)}>
                 <p className="font-ubuntu md:text-4xl">Archivos</p>

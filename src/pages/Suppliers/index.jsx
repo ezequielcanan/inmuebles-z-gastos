@@ -26,7 +26,7 @@ const Suppliers = () => {
           <Button>Agregar proveedor <FaPlus /></Button>
         </Link>
       </Section>
-      <section className="grid items-center justify-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 ">
+      <section className="grid justify-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 ">
         {suppliers ? (
           <>
             {suppliers.length ? suppliers.map((supplier, i) => {

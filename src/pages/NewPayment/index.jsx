@@ -44,6 +44,7 @@ const NewPayment = () => {
 
     data.total = data.amount
 
+    data.date = data.date || moment()
     data.white = { amount: data.total * budget?.percentage / 100, mcp: ((data.indexCac / budget?.baseIndex) - 1) * (data.total * budget?.percentage / 100) }
     data.black = { amount: data.total * (100 - budget?.percentage) / 100, mcp: ((data.indexCac / budget?.baseIndex) - 1) * (data.total * (100 - budget?.percentage) / 100) }
     data.budget = budget?._id

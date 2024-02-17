@@ -38,7 +38,7 @@ const Budget = () => {
     customAxios.get("/projects?filter=false").then(res => {
       customAxios.get(`/apartments/project/${res?.data?.payload[0]?._id}`).then(apartmentsRes => {
         const projectApartments = apartmentsRes?.data?.payload
-        setChoice({project: res?.data?.payload[0]?._id, apartment: projectApartments[0]?._id, apartments: mapApartments(projectApartments), dollar: 0, total: 0, subtractType: "quota"})
+        setChoice({ project: res?.data?.payload[0]?._id, apartment: projectApartments[0]?._id, apartments: mapApartments(projectApartments), dollar: 0, total: 0, subtractType: "quota" })
         setApartments(projectApartments)
       })
 
@@ -57,7 +57,7 @@ const Budget = () => {
   }, [reload])
 
   const onSubmit = async () => {
-    const data = {supplier: budget?.supplier, apartment: choice, bid}
+    const data = { supplier: budget?.supplier, apartment: choice, bid }
     const result = (await customAxios.post("/transaction/budget", data)).data
     setReload(!reload)
   }
@@ -74,7 +74,7 @@ const Budget = () => {
   const onChangePropertiesApartment = (property, newValue) => {
     const updateObject = {}
     updateObject[property] = newValue
-    setChoice({...choice, ...updateObject})
+    setChoice({ ...choice, ...updateObject })
   }
 
   const onChangeProject = async (pid) => {
@@ -82,7 +82,7 @@ const Budget = () => {
       try {
         const apartments = (await customAxios.get(`/apartments/project/${pid}`))?.data?.payload
         setApartments(apartments)
-        setChoice({...choice, apartment: apartments[0]?._id, apartments: mapApartments(apartments), project: pid})
+        setChoice({ ...choice, apartment: apartments[0]?._id, apartments: mapApartments(apartments), project: pid })
       }
       catch (e) {
         console.log(e)
@@ -153,12 +153,14 @@ const Budget = () => {
           <section className="flex flex-col items-start gap-y-[30px]">
             <div className="flex w-full justify-between items-center">
               <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
-              <Button>
-                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl flex gap-x-4">A <FaDownload /></a>
-              </Button>
-              <Button>
-                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/b/${budget?._id}`} download className="text-3xl flex gap-x-4">B <FaDownload /></a>
-              </Button>
+              <div className="flex gap-x-8">
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl">
+                  <Button className={"flex gap-x-4"}>A <FaDownload /></Button>
+                </a>
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/b/${budget?._id}`} download className="text-3xl">
+                  <Button className={"flex gap-x-4"}>B <FaDownload /></Button>
+                </a>
+              </div>
             </div>
             <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
               {payments.length ? payments?.map((payment, i) => {

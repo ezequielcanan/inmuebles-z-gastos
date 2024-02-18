@@ -117,8 +117,6 @@ const NewBudget = () => {
     setPaidApartments([...paidApartments])
   }
 
-  console.log(paidApartments)
-
   return (
     <Main className={"grid items-center justify-center py-[40px] gap-y-[30px]"} paddings>
       <section>

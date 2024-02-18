@@ -1,21 +1,29 @@
 import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router-dom"
+import { BounceLoader } from "react-spinners"
+import { formatNumber } from "../../utils/numbers"
+import { FaChevronLeft, FaDownload, FaNoteSticky, FaFileArrowUp, FaFile, FaFileArrowDown, FaTrash } from "react-icons/fa6"
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Navigation, Pagination, A11y } from 'swiper/modules'
 import Main from "../../containers/Main"
 import customAxios from "../../config/axios.config"
 import Form from "../../components/Form"
-import { Link, useParams } from "react-router-dom"
 import Section from "../../containers/Section"
+import Label from "../../components/Label"
 import Title from "../../components/Title"
-import { BounceLoader } from "react-spinners"
 import moment from "moment"
 import ApartmentCard from "../../components/ApartmentCard"
 import Subtitle from "../../components/Subtitle"
-import { formatNumber } from "../../utils/numbers"
 import Button from "../../components/Button"
 import PaymentCard from "../../components/PaymentCard"
 import Note from "../../components/Note"
 import SelectInput from "../../components/FormInput/SelectInput"
 import Input from "../../components/FormInput/Input"
-import { FaChevronLeft, FaDownload, FaNoteSticky } from "react-icons/fa6"
+
+import "swiper/css"
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
 
 const Budget = () => {
   const { bid } = useParams()
@@ -24,15 +32,20 @@ const Budget = () => {
   const [apartments, setApartments] = useState([])
   const [choice, setChoice] = useState({})
   const [projects, setProjects] = useState([])
+  const [files, setFiles] = useState([])
   const [reload, setReload] = useState(false)
 
   useEffect(() => {
     customAxios.get(`/budget/${bid}`).then(res => {
       setBudget(res?.data?.payload || {})
+      customAxios.get(`/budget/file/${res?.data?.payload?.project?._id}/${bid}`).then(resFiles => {
+        setFiles(resFiles?.data?.payload)
+      })
     }).catch(e => {
       setBudget("error")
     })
   }, [reload])
+
 
   useEffect(() => {
     customAxios.get("/projects?filter=false").then(res => {
@@ -95,6 +108,24 @@ const Budget = () => {
     setBudget(result?.payload)
   }
 
+  const uploadFile = async e => {
+    const file = e.target?.files[0]
+
+    const data = {}
+    data.folder = `projects/${budget?.project?._id}/budgets/${budget?._id}`
+    const formData = new FormData()
+    formData.append("data", JSON.stringify(data))
+    formData.append("file", file)
+
+    const fileResult = (await customAxios.post("/budget/file", formData, { headers: { "Content-Type": "multipart/form-data" } })).data
+    setReload(!reload)
+  }
+
+  const deleteFile = async (thumbnail) => {
+    await customAxios.delete(`/budget/file`, {data: {thumbnail}})
+    setReload(!reload)
+  }
+
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
       <Link to={"/budgets"}>
@@ -140,7 +171,7 @@ const Budget = () => {
                   <Form className={"bg-primary p-4 gap-y-2"} onSubmit={onSubmit}>
                     <h3 className="text-center text-white text-xl">Nuevo departamento</h3>
                     <SelectInput options={[{ value: "quota", text: "Por cuota" }, { value: "total", text: "Al total" }]} value={choice?.subtractType} className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} onChange={(e) => onChangePropertiesApartment("subtractType", e?.currentTarget?.value)} />
-                    <SelectInput options={choice?.apartments} prop className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} value={choice?.apartment} onChange={(e) => onChangePropertiesApartment("apartment", e?.currentTarget?.value)} />
+                    <SelectInput options={choice?.apartments} className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} value={choice?.apartment} onChange={(e) => onChangePropertiesApartment("apartment", e?.currentTarget?.value)} />
                     <SelectInput options={projects} className={"w-full text-white !text-sm"} optionClassName={"!text-white !text-lg"} value={choice?.project} onChange={(e) => onChangeProject(e?.currentTarget?.value)} />
                     <Input placeholder={"Equivalente a:"} type="number" value={choice?.total || ""} onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value))} className={"!w-full text-white !text-sm"} />
                     <Input placeholder={"Valor USD"} type="number" value={choice?.dollar || ""} className={"!w-full text-white !text-sm"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value))} />
@@ -168,11 +199,35 @@ const Budget = () => {
               }) : <p>No hay pagos registrados</p>}
             </div>
           </section>
+          <section className="flex flex-col items-start gap-y-[50px]">
+            <Subtitle>Archivos</Subtitle>
+            <Swiper slidesPerView={4} modules={[Navigation, Pagination, A11y]} autoHeight spaceBetween={20} navigation className="!w-full items-center" wrapperClass="flex items-start min-h-[200px]">
+              {files.map((file, i) => {
+                return file.includes(".") ? (<SwiperSlide key={file} className="!h-full">
+                  <div className="relative h-full">
+                    <a href={`${import.meta.env.VITE_REACT_API_URL}/static/projects/${budget?.project?._id}/budgets/${budget?._id}/${file}`} download className="flex text-white h-full items-center gap-y-[30px] bg-secondary flex-col justify-center p-4">
+                      <FaFileArrowDown className="text-4xl" />
+                      <h3 className="font-ubuntu text-center text-3xl">{file}</h3>
+                    </a>
+                    <div className="absolute top-2 right-2 p-2 text-xl hover:scale-105 duration-300 text-primary cursor-pointer bg-white rounded-full">
+                      <FaTrash onClick={() => deleteFile(`projects/${budget?.project?._id}/budgets/${budget?._id}/${file}`)}/>
+                    </div>
+                  </div>
+                </SwiperSlide>) : null
+              })}
+              <SwiperSlide className="!h-full">
+                <Input type="file" containerClassName={"w-full border-b-0 h-full"} className={"hidden"} id="file" onChange={uploadFile}>
+                  <Label name={"file"} className={"flex w-full h-full justify-center items-center border-4 border-dashed bg-secondary duration-500 hover:bg-secondary/60 border-white cursor-pointer text-center"}>
+                    <FaFileArrowUp className="text-white" />
+                  </Label>
+                </Input>
+              </SwiperSlide>
+            </Swiper>
+          </section>
           <section className="flex flex-col items-start gap-y-[30px]">
             <Subtitle className={"w-full sm:w-auto"}>Notas</Subtitle>
             <div className="flex flex-col gap-y-[10px] w-full">
               {budget?.notes?.length ? budget?.notes?.map((note, i) => {
-                console.log(note.note)
                 return <Note note={note} id={bid} setReload={setReload} key={note._id} />
               }) : <p>No hay notas registradas</p>}
               <Button className={"bg-blue-500 after:bg-blue-700 self-start"} onClick={addNote}>

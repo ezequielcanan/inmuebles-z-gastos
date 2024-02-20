@@ -3,6 +3,7 @@ import SelectInput from "../../components/FormInput/SelectInput"
 import Input from "../FormInput/Input"
 import Label from "../Label"
 import customAxios from "../../config/axios.config"
+import { FaTrashAlt } from "react-icons/fa"
 
 const BalanceNoteCard = ({note, bid, setBill}) => {
   const noteType = note.type == "debit" ? "débito" : "crédito"
@@ -14,10 +15,18 @@ const BalanceNoteCard = ({note, bid, setBill}) => {
     setBill(result?.data?.payload)
   }
 
+  const onDelete = async () => {
+    const result = await customAxios.delete(`/bill/balance-note/${bid}/${note?._id}`)
+    setBill(result?.data?.payload)
+  }
+
   return (
     <div className={`${note.type == "credit" ? "bg-success text-black" : "bg-fourth text-white"} w-full p-2 sm:p-4 flex flex-col items-center gap-y-[20px]`}>
-      <div>
-        <h3 className={`text-2xl`}>Nota de {noteType}</h3>
+      <div className="flex w-full items-center">
+        <h3 className={`text-2xl ml-auto`}>Nota de {noteType}</h3>
+        <div className="ml-auto bg-white p-2 rounded-full cursor-pointer" onClick={onDelete}>
+          <FaTrashAlt className="text-primary text-xl"/>
+        </div>
       </div>
       <div className="flex flex-col w-full">
         <SelectInput containerClassName={"gap-x-8 !w-full"} optionClassName={"!text-lg text-white"} options={[{text: "Crédito", value: "credit"}, {text: "Débito", value: "debit"}]} onChange={(e) => onChangeProperty("type", e?.target?.value)} defaultValue={note?.type} className={"sm:text-lg md:text-lg !w-full"}>

@@ -18,10 +18,12 @@ import Form from "../../components/Form"
 
 const Bill = () => {
   const { billId, bid, pid } = useParams();
-  const { register, getValues, handleSubmit, setValue } = useForm()
+  const { register, handleSubmit } = useForm()
   const [bill, setBill] = useState();
   const [edit, setEdit] = useState(false)
   const [values, setValues] = useState(false)
+  const [payment, setPayment] = useState(false)
+  const [documentSrc, setDocumentSrc] = useState()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -34,6 +36,18 @@ const Bill = () => {
         setBill("error");
       });
   }, [edit]);
+
+  useEffect(() => {
+    customAxios.get(`/payment/${pid}`).then(res => {
+      const paymentRes = res.data?.payload
+      const thumbnail = `/public/projects/${paymentRes?.budget?.project?._id}/budgets/${paymentRes?.budget?._id}/payments/${paymentRes?._id}/bill/${billId}`
+      customAxios.patch(`/bill/file`, { thumbnail }).then(res => {
+        console.log(res.data.payload)
+        setDocumentSrc(res?.data?.payload[0] || "")
+      })
+      setPayment(paymentRes)
+    })
+  }, [])
 
   const deleteBill = async () => {
     await customAxios.delete(`/bill/${billId}/${pid}`)
@@ -68,10 +82,12 @@ const Bill = () => {
           <Section>
             <Title>Factura Código: {bill?.code}</Title>
             <div className="flex gap-x-[20px] items-center">
-              <a href="" download>
-                <FaFileDownload className="text-5xl text-cyan-600"/>
-              </a>
-              <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />              
+              {documentSrc && (
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${billId}/${documentSrc}`} download>
+                  <FaFileDownload className="text-5xl text-cyan-600" />
+                </a>
+              )}
+              <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />
             </div>
           </Section>
           <section className="flex flex-col gap-y-[30px] items-start">
@@ -79,7 +95,7 @@ const Bill = () => {
               <Subtitle>Datos</Subtitle>
               <FaEdit className="text-4xl cursor-pointer" onClick={() => {
                 setEdit(!edit)
-                setValues({...bill})
+                setValues({ ...bill })
               }} />
             </div>
             <Form onSubmit={onSubmitUpdate} className={"flex items-start"}>
@@ -108,7 +124,7 @@ const Bill = () => {
             <Subtitle>Notas de crédito/débito</Subtitle>
             <div className="grid md:grid-cols-3 gap-8">
               {bill?.notes?.map((note) => {
-                return <BalanceNoteCard note={note} bid={billId} setBill={setBill} />
+                return <BalanceNoteCard key={note?._id} note={note} bid={billId} setBill={setBill} />
               })}
               <div className="bg-third text-black border-4 border-black flex items-center justify-center duration-300 hover:bg-secondary p-4 text-4xl rounded" onClick={addBalanceNote}>
                 <FaPlusCircle />

@@ -24,7 +24,7 @@ const Projects = () => {
       <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-2 2xl:grid-cols-3">
         {projects.length ? (
           projects.map((project,i) => {
-            return <ProjectCard thumbnail={project.thumbnail} title={project.title} key={i}/>
+            return <ProjectCard thumbnail={project.thumbnail} title={project.title} id={project?._id} key={project?._id}/>
           })
         ) : (
           <BounceLoader/>

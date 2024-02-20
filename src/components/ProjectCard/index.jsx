@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom"
 
-const ProjectCard = ({thumbnail, title, budgets}) => {
+const ProjectCard = ({thumbnail, title, id}) => {
   return (
     <div className="relative w-full sm:w-[400px]">
-      <Link className={`flex flex-col relative shadow-xl shadow-[#000] z-10  h-[320px] bg-right bg-cover flex justify-center duration-500 justify-content-center hover:brightness-[40%] project-card`}>
+      <Link to={`/projects/${id}`} className={`flex flex-col relative shadow-xl shadow-[#000] z-10  h-[320px] bg-right bg-cover flex justify-center duration-500 justify-content-center hover:brightness-[40%] project-card`}>
         <div className="absolute z-20 top-0 w-full h-[80px] flex items-center justify-center text-3xl font-bold bg-black/50 text-fourth px-3">
           <h3 className="mx-auto flex items-center justify-center text-white">{title}</h3>
         </div>

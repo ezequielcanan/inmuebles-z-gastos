@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { BounceLoader } from "react-spinners"
-import { FaChevronLeft, FaDownload, FaFileArrowUp, FaFileCircleCheck, FaNoteSticky } from "react-icons/fa6"
+import { FaChevronLeft, FaDownload, FaFileArrowUp, FaFileArrowDown, FaFileCircleCheck, FaNoteSticky, FaTrash } from "react-icons/fa6"
 import { FaTrashAlt } from "react-icons/fa"
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Navigation, Pagination, A11y } from 'swiper/modules'
 import { useForm } from "react-hook-form"
 import moment from "moment"
 import Form from "../../components/Form"
@@ -20,12 +22,19 @@ import SubpaymentCard from "../../components/SubpaymentCard"
 import SelectInput from "../../components/FormInput/SelectInput"
 import BillCard from "../../components/BilllCard"
 
+
+import "swiper/css"
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
 const Payment = () => {
   const { pid, bid } = useParams()
   const { register, handleSubmit, reset } = useForm()
   const [payment, setPayment] = useState(false)
   const [lastPayment, setLastPayment] = useState(false)
   const [file, setFile] = useState(false)
+  const [files, setFiles] = useState([])
   const [reloadFlag, setReloadFlag] = useState(false)
 
   const navigate = useNavigate()
@@ -35,6 +44,10 @@ const Payment = () => {
       customAxios.get(`/payment/budget/${res1?.data?.payload?.budget?._id}`).then(res => {
         const lastPayment = res?.data?.payload.find((p) => p?.paymentNumber == res1?.data?.payload?.paymentNumber - 1)
         setLastPayment(lastPayment)
+      })
+
+      customAxios.get(`/payment/file/${res1?.data?.payload?.budget?.project?._id}/${bid}/${pid}`).then(resFiles => {
+        setFiles(resFiles?.data?.payload)
       })
       setPayment(res1?.data?.payload || {})
     }).catch(e => {
@@ -85,10 +98,29 @@ const Payment = () => {
     navigate(`/budgets/${bid}`)
   }
 
+  const uploadFile = async e => {
+    const budget = payment?.budget
+    const file = e.target?.files[0]
+
+    const data = {}
+    data.folder = `projects/${budget?.project?._id}/budgets/${budget?._id}/payments/${payment?._id}`
+    const formData = new FormData()
+    formData.append("data", JSON.stringify(data))
+    formData.append("file", file)
+
+    const fileResult = (await customAxios.post("/payment/file", formData, { headers: { "Content-Type": "multipart/form-data" } })).data
+    setReloadFlag(!reloadFlag)
+  }
+
+  const deleteFile = async (thumbnail) => {
+    await customAxios.delete(`/payment/file/${pid}`, {data: {thumbnail}})
+    setReloadFlag(!reloadFlag)
+  }
+
   const billOptions = [{ text: "Certficado", value: "certificate" }, { text: "MCD", value: "mcd" }, { text: "MCP", value: "mcp" }]
 
   return (
-    <Main className={"flex flex-col gap-y-[70px]"} paddings>
+    <Main className={"flex flex-col pb-[100px] gap-y-[70px]"} paddings>
       <Link to={`/budgets/${bid}`}>
         <FaChevronLeft className="text-4xl"/>
       </Link>
@@ -166,9 +198,9 @@ const Payment = () => {
                   <Subtitle>Facturas</Subtitle>
                 </div>
                 <div className="grid xl:grid-cols-2 gap-8 w-full">
-                  {payment?.white?.bills?.map((bill) => {
-                    return <BillCard bill={bill} path={`/budgets/${bid}/payments/${pid}/${bill?.bill?._id}`}/>
-                  })}
+                  {payment?.white?.bills?.length ? payment?.white?.bills?.map((bill) => {
+                    return <BillCard bill={bill} key={bill?._id} path={`/budgets/${bid}/payments/${pid}/${bill?.bill?._id}`}/>
+                  }) : <p>No hay facturas registradas</p>}
                 </div>
               </div>
             </div>
@@ -194,6 +226,31 @@ const Payment = () => {
                 </div>
               </div>
             </div>
+          </section>
+          <section className="flex flex-col items-start gap-y-[50px]">
+            <Subtitle>Archivos</Subtitle>
+            <Swiper slidesPerView={4} modules={[Navigation, Pagination, A11y]} autoHeight spaceBetween={20} navigation className="!w-full items-center" wrapperClass="flex items-start min-h-[200px]">
+              {files.map((file, i) => {
+                return file.includes(".") ? (<SwiperSlide key={file} className="!h-full">
+                  <div className="relative h-full">
+                    <a href={`${import.meta.env.VITE_REACT_API_URL}/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/${file}`} download className="flex text-white h-full items-center gap-y-[30px] bg-secondary flex-col justify-center p-4">
+                      <FaFileArrowDown className="text-4xl" />
+                      <h3 className="font-ubuntu text-center text-3xl">{file}</h3>
+                    </a>
+                    <div className="absolute top-2 right-2 p-2 text-xl hover:scale-105 duration-300 text-primary cursor-pointer bg-white rounded-full">
+                      <FaTrash onClick={() => deleteFile(`projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/${file}`)}/>
+                    </div>
+                  </div>
+                </SwiperSlide>) : null
+              })}
+              <SwiperSlide className="!h-full">
+                <Input type="file" containerClassName={"w-full border-b-0 h-full"} className={"hidden"} id="filePayment" onChange={uploadFile}>
+                  <Label name={"filePayment"} className={"flex w-full h-full justify-center items-center border-4 border-dashed bg-secondary duration-500 hover:bg-secondary/60 border-white cursor-pointer text-center"}>
+                    <FaFileArrowUp className="text-white" />
+                  </Label>
+                </Input>
+              </SwiperSlide>
+            </Swiper>
           </section>
           <section className="flex flex-col items-start gap-y-[30px]">
             <Subtitle className={"w-full sm:w-auto"}>Notas</Subtitle>

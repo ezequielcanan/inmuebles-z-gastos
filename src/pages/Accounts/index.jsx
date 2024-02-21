@@ -36,7 +36,7 @@ const Accounts = () => {
                 return <AccountCard account={account} key={i}/>
               })
             ) : (
-              <h2>No hay proveedores registrados</h2>
+              <h2>No hay cuentas registradas</h2>
             )}
           </>
         ) : <BounceLoader/>}

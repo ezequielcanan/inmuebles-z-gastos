@@ -15,8 +15,12 @@ const Budgets = () => {
   useEffect(() => {
     customAxios.get("/budget").then(res => {
       setBudgets(res?.data?.payload || [])
+    }).catch(e => {
+      setBudgets("error")
     })
   }, [])
+
+
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <Section>
@@ -28,12 +32,12 @@ const Budgets = () => {
         </Link>
       </Section>
       <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-        {budgets.length ? (
+        {(budgets && budgets != "error") ? (
             budgets.map((budget,i) => {
               return <BudgetCard budget={budget}/>
             })
           ) : (
-            <BounceLoader/>
+            !budgets?.length ? <p>No hay presupuestos</p> : <BounceLoader/>
           )}
       </section>
     </Main>

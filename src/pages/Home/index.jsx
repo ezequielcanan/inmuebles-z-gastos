@@ -11,7 +11,7 @@ const Home = ({ user }) => {
           <h1 className="text-5xl md:text-7xl font-bold title">Gastos &<br />Balances</h1>
           <p className="text-lg md:text-2xl text-white">Aplicacion para manejo de obras y proveedores.</p>
         </div>
-        <Link to={!user ? "/login" : "/"}>
+        <Link to={!user ? "/login" : "/budgets"}>
           <Button style="first">
             {!user ? "Iniciar sesion" : "Empezar"} <FaArrowRight />
           </Button>

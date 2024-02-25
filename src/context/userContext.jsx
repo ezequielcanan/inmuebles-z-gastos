@@ -1,15 +1,40 @@
-import { createContext, useState } from "react"
+import { createContext, useState, useEffect } from "react"
 import CookiesJs from "js-cookie"
+import { socket } from "../socket"
+import customAxios from "../config/axios.config"
 
 export const UserContext = createContext()
 
-export const UserContextProvider = ({children}) => {
-  const [user,setUser] = useState(CookiesJs.get("jwt") ? true : false)
+export const UserContextProvider = ({ children }) => {
+  const [user, setUser] = useState(CookiesJs.get("jwt") ? true : false)
 
   const getUser = () => user
 
+  useEffect(() => {
+    if (user) {
+      const onNewMessage = () => {
+        console.log("notificacion")
+        new Audio("/notification.wav").play()
+      }
+      const onMessages = data => console.log(data)
+
+
+      customAxios.get(`/user/current`).then(res => {
+        const userObj = res?.data?.payload
+        socket.emit("connectEvt", userObj)
+        socket.on("newMessage", onNewMessage)
+        socket.on("messages", onMessages)
+      })
+
+      return () => {
+        socket.off("newMessage", onNewMessage)
+        socket.off("messages", onMessages)
+      }
+    }
+  }, [])
+
   return (
-    <UserContext.Provider value={{user,setUser,getUser}}>
+    <UserContext.Provider value={{ user, setUser, getUser }}>
       {children}
     </UserContext.Provider>
   )

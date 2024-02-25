@@ -6,6 +6,8 @@ import Title from "../../components/Title"
 import Section from "../../containers/Section"
 import { FaUserAlt } from "react-icons/fa"
 import Subtitle from "../../components/Subtitle"
+import { socket } from "../../socket"
+import moment from "moment"
 
 const User = () => {
   const [user, setUser] = useState(false)
@@ -33,6 +35,14 @@ const User = () => {
   const changePermissionOfUser = async (uid) => {
     await customAxios.put(`/user/${user?._id}/notifications/${uid}`)
     setReload(!reload)
+  }
+
+  const onClickMessage = () => {
+    user?.notifications?.forEach((u) => {
+      const messageObj = {text: "pruebaasdasd", dateTime: moment(), from: user?._id, to: u}
+      
+      socket.emit("sendMessage", {message: messageObj, receiver: u})
+    })
   }
 
   const roles = {
@@ -67,6 +77,7 @@ const User = () => {
                 </div>
               })}
             </div>
+            <button onClick={onClickMessage}>Send</button>
           </section>
         </>
       ) : (!user || !users) ? <BounceLoader size={100}/> : <Title>Se ha producido un error</Title>}

@@ -13,7 +13,6 @@ export const UserContextProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       const onNewMessage = () => {
-        console.log("notificacion")
         new Audio("/notification.wav").play()
       }
       const onMessages = data => console.log(data)

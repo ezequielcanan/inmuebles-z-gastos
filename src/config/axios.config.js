@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const customAxios = axios.create({
-  baseURL: "http://inmueblesz.ddns.net:3000/api",
+  baseURL: `${import.meta.env.VITE_REACT_API_URL}/api`,
   withCredentials: true
 })
 

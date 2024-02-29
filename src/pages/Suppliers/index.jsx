@@ -11,12 +11,13 @@ import Section from "../../containers/Section"
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState(false)
+  const [reload, setReload] = useState(false)
 
   useEffect(() => {
     customAxios.get("/supplier").then(res => {
       setSuppliers(res?.data?.payload || [])
     })
-  }, [])
+  }, [reload])
 
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
@@ -30,7 +31,7 @@ const Suppliers = () => {
         {suppliers ? (
           <>
             {suppliers.length ? suppliers.map((supplier, i) => {
-              return <SupplierCard key={i} id={supplier._id} title={supplier.name} referrer={supplier.referrer} budgets={supplier.budgets || 0} />
+              return <SupplierCard key={i} id={supplier._id} title={supplier.name} setReload={setReload} referrer={supplier.referrer} budgets={supplier.budgets || 0} />
             }) : (
               <h2>No hay proveedores registrados</h2>
             )}

@@ -22,6 +22,7 @@ import Bill from "../pages/Bill"
 import EditSubpayment from "../pages/EditSubpayment"
 import Project from "../pages/Project"
 import User from "../pages/User"
+import EditSupplier from "../pages/EditSupplier"
 
 const Router = () => {
   const { getUser, setUser } = useContext(UserContext)
@@ -43,6 +44,7 @@ const Router = () => {
             <Route path="/suppliers" element={<Suppliers/>}/>
             <Route path="/suppliers/:sid" element={<Supplier/>}/>
             <Route path="/suppliers/new" element={<NewSupplier/>}/>
+            <Route path="/suppliers/:sid/edit" element={<EditSupplier/>}/>
             <Route path="/projects" element={<Projects/>}/>
             <Route path="/projects/:pid" element={<Project/>}/>
             <Route path="/budgets" element={<Budgets/>}/>
@@ -56,7 +58,7 @@ const Router = () => {
             <Route path="/budgets/new" element={<NewBudget/>}/>
             <Route path="/accounts" element={<Accounts/>}/>
             <Route path="/accounts/new" element={<NewAccount/>}/>
-            <Route path="/user" element={<User/>}/>
+            {/*<Route path="/user" element={<User/>}/>*/}
           </>
         )}
       </Routes>

@@ -22,7 +22,7 @@ const NewAccount = () => {
   return (
     <Main className={"grid items-center justify-center gap-y-[30px]"} paddings>
       <section>
-        <Title className={"text-center md:text-start"}>
+        <Title className={"text-start md:text-center"}>
           Nueva cuenta bancaria
         </Title>
       </section>

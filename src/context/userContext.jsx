@@ -15,7 +15,7 @@ export const UserContextProvider = ({ children }) => {
       const onNewMessage = () => {
         new Audio("/notification.wav").play()
       }
-      const onMessages = data => console.log(data)
+      const onMessages = data => {}
 
 
       customAxios.get(`/user/current`).then(res => {

@@ -34,6 +34,7 @@ const NewPayment = () => {
   }, [])
 
   const onSubmit = handleSubmit(async data => {
+    data.advanceMethod = data.advanceMethod || "percentage"
     data.percentageOfTotal = data.advanceMethod == "percentage" ? (data.percentageOfTotal || ((budget?.total / budget?.quotas) * 100 / budget?.total)) : (data.percentageOfTotal * 100 / budget?.total)
     data.amount = budget?.total * data?.percentageOfTotal / 100
     data.discountByApartments = budget?.paidApartments?.reduce((acc, apartment) => apartment.discount == "quota" ? acc + (apartment?.apartment?.total * apartment?.apartment?.dolar) * data.percentageOfTotal / 100 : acc, 0)
@@ -93,7 +94,7 @@ const NewPayment = () => {
               {budget?.paymentType == "advance" ? (
                 <Input type="number" className="!max-w-[300px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
-                  <SelectInput register={{ ...register("advanceMethod") }} options={[{ text: "%", value: "percentage" }, { text: "$", value: "money" }]} />
+                  <SelectInput register={{ ...register("advanceMethod") }} defaultValue="percentage"  options={[{ text: "%", value: "percentage" }, { text: "$", value: "money" }]} />
                 </Input>
               ) : null}
               <Input placeholder={"Ultimo cac"} type="number" register={{ ...register("indexCac") }}>

@@ -11,6 +11,7 @@ import BudgetCard from "../../components/BudgetCard"
 
 const Budgets = () => {
   const [budgets, setBudgets] = useState(false)
+  const [reload, setReload] = useState(false)
 
   useEffect(() => {
     customAxios.get("/budget").then(res => {
@@ -18,7 +19,7 @@ const Budgets = () => {
     }).catch(e => {
       setBudgets("error")
     })
-  }, [])
+  }, [reload])
 
 
   return (
@@ -34,7 +35,7 @@ const Budgets = () => {
       <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
         {(budgets && budgets != "error") ? (
             budgets.map((budget,i) => {
-              return <BudgetCard budget={budget}/>
+              return <BudgetCard budget={budget} key={budget?._id} setReload={setReload}/>
             })
           ) : (
             !budgets?.length ? <p>No hay presupuestos</p> : <BounceLoader/>

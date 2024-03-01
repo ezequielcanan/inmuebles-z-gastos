@@ -1,7 +1,8 @@
 import { Link, NavLink } from "react-router-dom"
 import { MdAccountBalanceWallet, MdConstruction, MdNotifications, MdOutlineMenu } from "react-icons/md"
 import { FaHelmetSafety } from "react-icons/fa6"
-import { FaChevronDown, FaMoneyCheckAlt, FaTicketAlt, FaUser, FaUserAlt } from "react-icons/fa"
+import { FaCertificate, FaChevronDown, FaMoneyCheckAlt, FaTicketAlt, FaUser, FaUserAlt } from "react-icons/fa"
+import { HiOutlineDocument } from "react-icons/hi"
 import { LuLogOut } from "react-icons/lu"
 import { GiMoneyStack } from "react-icons/gi"
 import { useState } from "react"
@@ -20,6 +21,8 @@ const Navbar = ({ user, setUser }) => {
         { text: "Proyectos", to: "/projects", logo: MdConstruction },
         { text: "Proveedores", to: "/suppliers", logo: FaHelmetSafety },
         { text: "Presupuestos", to: "/budgets", logo: GiMoneyStack },
+        { text: "Certificados", to: "/payments", logo: FaCertificate },
+        { text: "Facturas", to: "/bills", logo: HiOutlineDocument },
       ]
     },
     {

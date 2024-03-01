@@ -82,7 +82,7 @@ const NewPayment = () => {
               </Title>
             </div>
             <Subtitle className={"md:text-5xl"}>
-              Nuevo pago
+              Nuevo certificado
             </Subtitle>
           </Section>
           <Section style="form">
@@ -107,7 +107,7 @@ const NewPayment = () => {
                 </Label>
               </Input>
               <Button type="submit" style="submit" className={"text-black"}>
-                Ingresar pago
+                Ingresar certificado
               </Button>
             </Form>
           </Section>

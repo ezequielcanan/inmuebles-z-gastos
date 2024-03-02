@@ -8,11 +8,12 @@ import { Fa0, FaChevronLeft } from "react-icons/fa6"
 import Section from "../../containers/Section"
 import BudgetCard from "../../components/BudgetCard"
 import SupplierCard from "../../components/SupplierCard"
+import Button from "../../components/Button"
 
-const Project = () => {
-  const { pid } = useParams()
+const ProjectAndSupplierBudgets = () => {
+  const { pid, sid } = useParams()
   const [project, setProject] = useState()
-  const [suppliers, setSuppliers] = useState()
+  const [budgets, setBudgets] = useState([])
 
   useEffect(() => {
     customAxios.get(`/projects/${pid}`).then(res => {
@@ -23,23 +24,28 @@ const Project = () => {
   }, [])
 
   useEffect(() => {
-    customAxios.get(`/supplier?pid=${pid}`).then(res => {
-      setSuppliers(res?.data?.payload)
+    customAxios.get(`/budget/project/${pid}?sid=${sid}`).then(res => {
+      setBudgets(res?.data?.payload)
     })
   }, [])
 
   return (
     <Main className={"flex flex-col pt-[150px] gap-y-[40px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to="/projects"><FaChevronLeft size={50}/></Link>
+      <Link to={`/projects/${pid}`}><FaChevronLeft size={50}/></Link>
       {project ? (
         project != "error" ? (
           <>
             <Section>
-              <Title>{project.title}</Title>
+              <Title>{project.title} - {budgets[0]?.supplier?.name}</Title>
+              <Link to={`/projects/${pid}/${sid}/new-bill`}>
+                <Button>
+                  Nueva factura
+                </Button>
+              </Link>
             </Section>
             <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-              {suppliers?.length ? suppliers?.map((supplier) => {
-                return <SupplierCard key={supplier?._id} title={supplier?.name} referrer={supplier?.referrer} budgets={supplier?.budgets} path={`/projects/${pid}/${supplier?._id}`} id={supplier?._id}/>
+              {budgets?.length ? budgets?.map((budget) => {
+                return <BudgetCard key={budget?._id} budget={budget}/>
               }) : <h2>No hay presupuestos de este proyecto</h2>}
             </section>
           </>
@@ -53,4 +59,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default ProjectAndSupplierBudgets

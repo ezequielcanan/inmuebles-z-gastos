@@ -38,7 +38,7 @@ const NewBill = () => {
     data.project = pid
     const result = (await customAxios.post(`/bill`, data)).data
 
-    data.folder = `projects/${payment?.budget?.project?._id}/bills/${payment?.budget?._id}/payments/${payment?._id}/bill/${result?.payload?._id}`
+    data.folder = `projects/${payment?.budget?.project?._id}/supplier/${payment?.budget?._id}/payments/${payment?._id}/bill/${result?.payload?._id}`
     const formData = new FormData()
     formData.append("data", JSON.stringify(data))
     formData.append("file", file)

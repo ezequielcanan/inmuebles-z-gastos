@@ -35,9 +35,10 @@ const NewBill = () => {
   const onSubmit = handleSubmit(async data => {
     data.cuit = data?.cuit || payment?.budget?.supplier?.cuit
     data.receiver = sid
-    const result = (await customAxios.post(`/bill/${pid}`, data)).data
+    data.project = pid
+    const result = (await customAxios.post(`/bill`, data)).data
 
-    data.folder = `projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${result?.payload?._id}`
+    data.folder = `projects/${payment?.budget?.project?._id}/bills/${payment?.budget?._id}/payments/${payment?._id}/bill/${result?.payload?._id}`
     const formData = new FormData()
     formData.append("data", JSON.stringify(data))
     formData.append("file", file)

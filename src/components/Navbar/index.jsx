@@ -5,7 +5,8 @@ import { FaCertificate, FaChevronDown, FaMoneyCheckAlt, FaTicketAlt, FaUser, FaU
 import { HiOutlineDocument } from "react-icons/hi"
 import { LuLogOut } from "react-icons/lu"
 import { GiMoneyStack } from "react-icons/gi"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { socket } from "../../socket"
 import CookiesJs from "js-cookie"
 import Button from "../Button"
 
@@ -13,6 +14,7 @@ const Navbar = ({ user, setUser }) => {
   const [dropdown, setDropdown] = useState("")
   const [width, setWidth] = useState(window.innerWidth)
   const [nav, setNav] = useState(false)
+  const [newNotification, setNewNotification] = useState(false)
 
   const headerSections = [
     {
@@ -32,6 +34,21 @@ const Navbar = ({ user, setUser }) => {
       ]
     }
   ]
+
+  useEffect(() => {
+    const onNewMessage = () => {
+      setNewNotification(true)
+      new Audio("/notification.wav").play()
+    }
+    const onMessages = data => { }
+
+    socket.on("newMessage", onNewMessage)
+    socket.on("messages", onMessages)
+
+    return () => {
+      socket.off("messages", onMessages)
+    }
+  }, [])
 
   window.addEventListener("resize", e => setWidth(window.innerWidth))
 
@@ -56,15 +73,16 @@ const Navbar = ({ user, setUser }) => {
             </div>
           })}
           <ul className="hidden md:flex xl:flex-col gap-x-[10px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
-            <li className={`xl:block w-full`}>
+            <li className={`self-start`}>
               <Link to={"/user"}>
                 <Button style="icon"><FaUser /></Button>
               </Link>
             </li>
-            <li className={`xl:block w-full`}>
+            <li className={`relative self-start`}>
               <Button style="icon"><MdNotifications /></Button>
+              {newNotification ? <span className="absolute w-[20px] h-[20px] top-0 right-0 rounded-full bg-gradient-to-tr from-red-400 to-red-600"/> : null}
             </li>
-            {user ? <li className="xl:block w-full">
+            {user ? <li className="self-start">
               <Link to={"/"} className="hidden md:flex items-center">
                 <Button style="icon" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /></Button>
               </Link>

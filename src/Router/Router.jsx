@@ -53,6 +53,7 @@ const Router = () => {
             <Route path="/projects/:pid" element={<Project/>}/>
             <Route path="/projects/:pid/:sid" element={<ProjectAndSupplierBudgets/>}/>
             <Route path="/projects/:pid/:sid/new-bill" element={<NewBill/>}/>
+            <Route path="/projects/:pid/:sid/:billId" element={<Bill path={false} movements/>}/>
             <Route path="/budgets" element={<Budgets/>}/>
             <Route path="/budgets/:bid" element={<Budget/>}/>
             <Route path="/budgets/:bid/payments/new" element={<NewPayment/>}/>
@@ -66,7 +67,7 @@ const Router = () => {
             <Route path="/accounts/:aid" element={<Account/>}/>
             <Route path="/accounts/:aid/new-movement" element={<NewMovement/>}/>
             <Route path="/accounts/new" element={<NewAccount/>}/>
-            {/*<Route path="/user" element={<User/>}/>*/}
+            <Route path="/user" element={<User/>}/>
           </>
         )}
       </Routes>

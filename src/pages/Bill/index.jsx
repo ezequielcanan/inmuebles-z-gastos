@@ -16,8 +16,8 @@ import Input from "../../components/FormInput/Input";
 import Label from "../../components/Label";
 import Form from "../../components/Form"
 
-const Bill = () => {
-  const { billId, bid, pid } = useParams();
+const Bill = ({ path = true, movements = false }) => {
+  const { billId, bid, pid, sid } = useParams();
   const { register, handleSubmit } = useForm()
   const [bill, setBill] = useState();
   const [edit, setEdit] = useState(false)
@@ -38,16 +38,28 @@ const Bill = () => {
   }, [edit]);
 
   useEffect(() => {
-    customAxios.get(`/payment/${pid}`).then(res => {
-      const paymentRes = res.data?.payload
-      const thumbnail = `/public/projects/${paymentRes?.budget?.project?._id}/budgets/${paymentRes?.budget?._id}/payments/${paymentRes?._id}/bill/${billId}`
+    if (path) {
+      customAxios.get(`/payment/${pid}`).then(res => {
+        const paymentRes = res.data?.payload
+        const thumbnail = `/public/projects/${paymentRes?.budget?.project?._id}/budgets/${paymentRes?.budget?._id}/payments/${paymentRes?._id}/bill/${billId}`
+        customAxios.patch(`/bill/file`, { thumbnail }).then(res => {
+          setDocumentSrc(res?.data?.payload[0] || "")
+        })
+        setPayment(paymentRes)
+      })
+    } else {
+      const thumbnail = `/public/projects/${pid}/supplier/${sid}/bill/${billId}`
       customAxios.patch(`/bill/file`, { thumbnail }).then(res => {
-        console.log(res.data.payload)
         setDocumentSrc(res?.data?.payload[0] || "")
       })
-      setPayment(paymentRes)
-    })
+    }
   }, [])
+
+  if (movements) {
+    useEffect(() => {
+      console.log("Asdasdasd")
+    }, [])
+  }
 
   const deleteBill = async () => {
     await customAxios.delete(`/bill/${billId}/${pid}`)
@@ -76,14 +88,14 @@ const Bill = () => {
     <Main className={"flex flex-col gap-y-[70px] py-[100px]"} paddings>
       {bill && bill != "error" ? (
         <>
-          <Link to={`/budgets/${bid}/payments/${pid}`}>
+          <Link to={path ? `/budgets/${bid}/payments/${pid}` : `/projects/${pid}/${bill?.receiver}`}>
             <FaChevronLeft className="text-4xl" />
           </Link>
           <Section>
             <Title>Factura Código: {bill?.code}</Title>
             <div className="flex gap-x-[20px] items-center">
               {documentSrc && (
-                <a href={`${import.meta.env.VITE_REACT_API_URL}/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${billId}/${documentSrc}`} download>
+                <a href={path ? `${import.meta.env.VITE_REACT_API_URL}/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${billId}/${documentSrc}` : `${import.meta.env.VITE_REACT_API_URL}/static/projects/${pid}/supplier/${sid}/bill/${billId}/${documentSrc}`} download>
                   <FaFileDownload className="text-5xl text-cyan-600" />
                 </a>
               )}

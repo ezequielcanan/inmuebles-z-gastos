@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { GiMoneyStack } from "react-icons/gi"
 import { useForm } from "react-hook-form"
 import { FaFileArrowUp } from "react-icons/fa6"
+import { FaChevronLeft } from "react-icons/fa"
+import { socket } from "../../socket"
 import moment from "moment"
 import Title from "../../components/Title"
 import Subtitle from "../../components/Subtitle"
@@ -16,14 +18,20 @@ import Input from "../../components/FormInput/Input"
 import Label from "../../components/Label"
 import Button from "../../components/Button"
 import axios from "axios"
-import { FaChevronLeft } from "react-icons/fa"
 
 const NewPayment = () => {
   const { bid } = useParams()
   const { register, handleSubmit } = useForm()
   const [budget, setBudget] = useState()
   const [files, setFiles] = useState(false)
+  const [user, setUser] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    customAxios.get("/user/current").then(res => {
+      setUser(res?.data?.payload)
+    })
+  }, [])
 
   useEffect(() => {
     customAxios.get(`/budget/${bid}`).then(res => {
@@ -64,6 +72,13 @@ const NewPayment = () => {
     })
 
     const fileResult = (await customAxios.post(`/payment/files`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data
+
+    user?.notifications?.forEach((u) => {
+      const messageObj = {text: "pruebaasdasd", dateTime: moment(), from: user?._id, to: u?.user}
+      
+      if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageObj, receiver: u?.user})
+    })
+
     navigate(`/budgets/${budget?._id}`)
   })
 

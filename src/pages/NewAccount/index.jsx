@@ -9,10 +9,23 @@ import Label from "../../components/Label"
 import Button from "../../components/Button"
 import customAxios from "../../config/axios.config"
 import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import SelectInput from "../../components/FormInput/SelectInput"
 
 const NewAccount = () => {
-  const { register, handleSubmit } = useForm()
   const navigate = useNavigate()
+  const { register, handleSubmit } = useForm()
+  const [projects, setProjects] = useState(false)
+
+  useEffect(() => {
+    customAxios.get("/projects?filter=false").then(res => {
+      setProjects(res?.data?.payload.map((project => {
+        return { text: project.title, value: project._id }
+      })) || [])
+    }).catch(e => {
+      setProjects([])
+    })
+  }, [])
 
   const onSubmit = handleSubmit(async data => {
     const result = (await customAxios.post("/account", data)).data
@@ -26,12 +39,12 @@ const NewAccount = () => {
           Nueva cuenta bancaria
         </Title>
       </section>
-      <Section style="form">
+      {projects ? <Section style="form">
         <MdAccountBalanceWallet className="text-[100px] md:text-[180px]" />
         <Form onSubmit={onSubmit}>
-          <Input register={{...register("society")}}>
+          <SelectInput register={{...register("society")}} options={projects}>
             <Label name={"society"} text={"Sociedad:"}/>
-          </Input>
+          </SelectInput>
           <Input register={{...register("cbu")}}>
             <Label name={"cbu"} text={"CBU:"}/>
           </Input>
@@ -51,7 +64,7 @@ const NewAccount = () => {
             Agregar Cuenta
           </Button>
         </Form>
-      </Section>
+      </Section> : null}
     </Main>
   )
 }

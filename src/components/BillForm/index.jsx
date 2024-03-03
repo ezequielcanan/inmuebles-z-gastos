@@ -5,7 +5,7 @@ import Input from "../FormInput/Input"
 import Label from "../Label"
 import Button from "../Button"
 
-const BillForm = ({onSubmit, setFile, file, register, billOptions, hasBillOptions=true}) => {
+const BillForm = ({onSubmit, setFile, file, register, billOptions, hasConcept=true, hasBillOptions=true}) => {
   return <Form onSubmit={onSubmit} className={"bg-third text-black flex flex-col items-center justify-between self-center p-5"}>
     <Input type="file" className={"hidden"} containerClassName={"!border-b-0 text-center max-w-[200px] w-full"} id="file" onChange={(e) => setFile(e.target.files[0])}>
       <Label name={"file"} className={"flex flex-col cursor-pointer text-center items-center justify-center border-4 border-black text-black max-w-[200px] w-full max-h-[200px] h-[200px]"}>
@@ -36,7 +36,7 @@ const BillForm = ({onSubmit, setFile, file, register, billOptions, hasBillOption
     <Input register={{ ...register("amount", { required: true }) }} type="number" containerClassName={"!w-full border-b-black"} className={"!w-full max-w-[350px]"}>
       <Label name={"amount"}>Neto:</Label>
     </Input>
-    {hasBillOptions ? (
+    {hasConcept && (hasBillOptions ? (
       <SelectInput options={billOptions} optionClassName={"!text-white"} containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>
         <Label name={"concept"} text={"En concepto de:"} />
       </SelectInput>
@@ -44,7 +44,7 @@ const BillForm = ({onSubmit, setFile, file, register, billOptions, hasBillOption
       <Input containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>
         <Label name={"concept"} text={"En concepto de:"} />
       </Input>
-    )}
+    ))}
     <Button className={"text-center justify-center max-w-[200px] w-[200px]"} type="submit">
       Subir factura
     </Button>

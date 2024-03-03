@@ -16,6 +16,7 @@ const NewMovement = () => {
 
   const onSubmit = handleSubmit(async data => {
     data.account = aid
+    data.expirationDate = data.expirationDate || data.emissionDate
     await customAxios.post("/movement", data)
     navigate(`/accounts/${aid}`)
   })
@@ -29,8 +30,11 @@ const NewMovement = () => {
       </section>
       <Section style="form">
         <Form onSubmit={onSubmit}>
-          <Input register={{...register("date", {required: true})}} type="date">
-            <Label name={"date"} text={"Fecha:"}/>
+          <Input register={{...register("emissionDate", {required: true})}} type="date">
+            <Label name={"emissionDate"} text={"Emisión:"}/>
+          </Input>
+          <Input register={{...register("expirationDate")}} type="date">
+            <Label name={"expirationDate"} text={"Vencimiento:"}/>
           </Input>
           <Input register={{...register("checkCode")}}>
             <Label name={"checkCode"} text={"N° de cheque:"}/>

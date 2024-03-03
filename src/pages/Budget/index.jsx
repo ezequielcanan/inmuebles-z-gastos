@@ -165,7 +165,6 @@ const Budget = () => {
                 <Subtitle className={"w-full sm:w-auto"}>Departamentos entregados:</Subtitle>
                 <div className="grid px-2 w-full lg:grid-cols-2 xl:grid-cols-3 xl:p-0 gap-16">
                   {budget?.paidApartments.map(((apartment, i) => {
-                    console.log(apartment)
                     return <ApartmentCard key={i} transaction={apartment?.apartment} subtractionType={apartment?.discount} />
                   }))}
                   <Form className={"bg-primary p-4 gap-y-2"} onSubmit={onSubmit}>

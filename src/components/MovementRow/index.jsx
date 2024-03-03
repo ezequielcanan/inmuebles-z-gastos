@@ -1,7 +1,7 @@
 import moment from "moment"
 import Input from "../FormInput/Input"
 
-const MovementRow = ({movement}) => {
+const MovementRow = ({movement, lastMovement}) => {
 
   const inputProps = {
     containerClassName: "!border-b-0 !w-full",
@@ -10,15 +10,16 @@ const MovementRow = ({movement}) => {
   }
 
   return (
-    <tr className="border-b-4 border-secondary">
-      <td className="p-3"><Input defaultValue={moment.utc(movement?.date).format("YYYY-MM-DD")} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.checkCode} containerClassName={"!border-b-0 !w-full"} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.detail} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.credit} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.debit} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.tax * movement?.credit} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.credit * 0.006} {...inputProps}/></td>
-      <td className="p-3"><Input defaultValue={movement?.debit * 0.006} {...inputProps}/></td>
+    <tr className="border-b-4 border-secondary duration-300 hover:bg-white/40">
+      <td className="p-3">{moment.utc(movement?.emissionDate).format("DD-MM-YYYY")}</td>
+      <td className="p-3">{moment.utc(movement?.expirationDate).format("DD-MM-YYYY")}</td>
+      <td className="p-3">{movement?.checkCode}</td>
+      <td className="p-3">{movement?.detail}</td>
+      <td className="p-3">{movement?.credit}</td>
+      <td className="p-3">{movement?.debit}</td>
+      <td className="p-3">{movement?.tax * movement?.credit}</td>
+      <td className="p-3">{movement?.credit * 0.006}</td>
+      <td className></td>
     </tr>
   )
 }

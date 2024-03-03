@@ -21,8 +21,8 @@ export const UserContextProvider = ({ children }) => {
       customAxios.get(`/user/current`).then(res => {
         const userObj = res?.data?.payload
         socket.emit("connectEvt", userObj)
-        socket.on("newMessage", onNewMessage)
-        socket.on("messages", onMessages)
+        //socket.on("newMessage", onNewMessage)
+        //socket.on("messages", onMessages)
       })
 
       return () => {

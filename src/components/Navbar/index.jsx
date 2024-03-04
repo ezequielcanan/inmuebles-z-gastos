@@ -40,13 +40,11 @@ const Navbar = ({ user, setUser }) => {
       setNewNotification(true)
       new Audio("/notification.wav").play()
     }
-    const onMessages = data => { }
 
     socket.on("newMessage", onNewMessage)
-    socket.on("messages", onMessages)
 
     return () => {
-      socket.off("messages", onMessages)
+      socket.off("newMessage", onNewMessage)
     }
   }, [])
 
@@ -79,7 +77,9 @@ const Navbar = ({ user, setUser }) => {
               </Link>
             </li>
             <li className={`relative self-start`}>
-              <Button style="icon"><MdNotifications /></Button>
+              <Link to={"/notifications"}>
+                <Button style="icon"><MdNotifications /></Button>
+              </Link>
               {newNotification ? <span className="absolute w-[20px] h-[20px] top-0 right-0 rounded-full bg-gradient-to-tr from-red-400 to-red-600"/> : null}
             </li>
             {user ? <li className="self-start">

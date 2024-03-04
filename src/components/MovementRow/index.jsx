@@ -19,7 +19,6 @@ const MovementRow = ({movement, lastMovement}) => {
       <td className="p-3">{movement?.debit}</td>
       <td className="p-3">{movement?.tax * movement?.credit}</td>
       <td className="p-3">{movement?.credit * 0.006}</td>
-      <td className></td>
     </tr>
   )
 }

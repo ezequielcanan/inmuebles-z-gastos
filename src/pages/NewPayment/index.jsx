@@ -74,7 +74,7 @@ const NewPayment = () => {
     const fileResult = (await customAxios.post(`/payment/files`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data
 
     user?.notifications?.forEach((u) => {
-      const messageObj = {text: "pruebaasdasd", dateTime: moment(), from: user?._id, to: u?.user}
+      const messageObj = {text: `Nuevo certificado del presupuesto: ${budget?.title} de ${budget?.supplier?.name} en el proyecto ${budget?.project?.title}.`, dateTime: moment(), from: user?._id, to: u?.user, type: "certificate", data: {budget, payment: result?.payload}}
       
       if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageObj, receiver: u?.user})
     })

@@ -12,23 +12,10 @@ export const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      const onNewMessage = () => {
-        new Audio("/notification.wav").play()
-      }
-      const onMessages = data => {}
-
-
       customAxios.get(`/user/current`).then(res => {
         const userObj = res?.data?.payload
         socket.emit("connectEvt", userObj)
-        //socket.on("newMessage", onNewMessage)
-        //socket.on("messages", onMessages)
       })
-
-      return () => {
-        socket.off("newMessage", onNewMessage)
-        socket.off("messages", onMessages)
-      }
     }
   }, [])
 

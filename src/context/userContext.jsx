@@ -7,6 +7,8 @@ export const UserContext = createContext()
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(CookiesJs.get("jwt") ? true : false)
+  const [messages, setMessages] = useState([])
+  const [newNotification, setNewNotification] = useState(false)
 
   const getUser = () => user
 
@@ -16,11 +18,25 @@ export const UserContextProvider = ({ children }) => {
         const userObj = res?.data?.payload
         socket.emit("connectEvt", userObj)
       })
+  
+      const onNewMessage = () => {
+        setNewNotification(true)
+        new Audio("/notification.wav").play()
+      }
+
+      const onMessages = data => {
+        setMessages(data)
+      }
+  
+      socket.on("messages", onMessages)
+      socket.on("newMessage", onNewMessage)
     }
   }, [])
 
+  
+
   return (
-    <UserContext.Provider value={{ user, setUser, getUser }}>
+    <UserContext.Provider value={{ user, setUser, getUser, messages, newNotification, setNewNotification, setMessages }}>
       {children}
     </UserContext.Provider>
   )

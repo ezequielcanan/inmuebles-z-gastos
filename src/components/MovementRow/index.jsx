@@ -10,7 +10,7 @@ const MovementRow = ({movement, lastMovement}) => {
   }
 
   return (
-    <tr className="border-b-4 border-secondary duration-300 hover:bg-white/40">
+    <tr className="border-b-4 border-secondary duration-300">
       <td className="p-3">{moment.utc(movement?.emissionDate).format("DD-MM-YYYY")}</td>
       <td className="p-3">{moment.utc(movement?.expirationDate).format("DD-MM-YYYY")}</td>
       <td className="p-3">{movement?.checkCode}</td>

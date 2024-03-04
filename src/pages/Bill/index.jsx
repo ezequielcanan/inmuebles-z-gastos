@@ -15,6 +15,7 @@ import BalanceNoteCard from "../../components/BalanceNoteCard";
 import Input from "../../components/FormInput/Input";
 import Label from "../../components/Label";
 import Form from "../../components/Form"
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const Bill = ({ path = true, movements = false }) => {
   const { billId, bid, pid, sid } = useParams();
@@ -99,6 +100,7 @@ const Bill = ({ path = true, movements = false }) => {
                   <FaFileDownload className="text-5xl text-cyan-600" />
                 </a>
               )}
+              <Link className="text-5xl text-green-700" to={`pay`}><FaMoneyBillTransfer/></Link>
               <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />
             </div>
           </Section>

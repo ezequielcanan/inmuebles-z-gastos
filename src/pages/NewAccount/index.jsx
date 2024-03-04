@@ -60,6 +60,9 @@ const NewAccount = () => {
           <Input register={{...register("name")}}>
             <Label name={"name"} text={"Titular:"}/>
           </Input>
+          <Input register={{...register("initialBalance", {required: true})}} type="number">
+            <Label name={"initialBalance"} text={"Saldo inicial:"}/>
+          </Input>
           <Button type="submit" style="submit" className={"text-black"}>
             Agregar Cuenta
           </Button>

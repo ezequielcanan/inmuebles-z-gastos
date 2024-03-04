@@ -1,34 +1,31 @@
 import { useEffect, useState, useContext } from "react"
-import { socket } from "../../socket"
 import { UserContext } from "../../context/userContext"
+import Section from "../../containers/Section"
 import Main from "../../containers/Main"
+import Title from "../../components/Title"
+import NotificationCard from "../../components/NotificationCard"
 
 const Notifications = () => {
   const [messages, setMessages] = useState(false)
-  const [reload, setReload] = useState(false)
-  const { getUser } = useContext(UserContext)
+  const { getUser, messages: messagesContext, setNewNotification } = useContext(UserContext)
 
   useEffect(() => {
-    if (getUser()) {
-      const onNewMessage = () => {
-        setReload(!reload)
-        new Audio("/notification.wav").play()
-      }
+    setMessages(messagesContext)
+    setNewNotification(false)
+  }, [messagesContext])
 
-      const onMessages = console.log
 
-      socket.emit("getMessages")
-      socket.on("messages", onMessages)
-      socket.on("newMessage", onNewMessage)
-
-      return () => {
-        socket.off("newMessage", onNewMessage)
-      }
-    }
-  }, [reload])
-
-  return <Main>
-    
+  return <Main className={"flex flex-col gap-y-[70px]"} paddings>
+    <Section>
+      <Title>Notificaciones</Title>
+    </Section>
+    <section className="flex flex-col gap-y-[20px]">
+      {(messages && messages.length) ? messages?.map((message) => {
+        return <NotificationCard message={message} />
+      }) : (
+        <h1>No hay notificaciones</h1>
+      )}
+    </section>
   </Main>
 }
 

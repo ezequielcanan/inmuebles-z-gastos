@@ -86,9 +86,9 @@ const NewSubpayment = () => {
 
   const onSubmit = type == "a" ? whiteSubmit : blackSubmit
 
-  const addArrayObj = (array = checks, setFunction = setChecks) => {
-    if (accounts) {
-      setFunction([...array, { id: (array[array.length - 1]?.id + 1) || 1, account: accounts[0]?.value }])
+  const addArrayObj = (array = checks, setFunction = setChecks, type = "check") => {
+    if (accounts && payment) {
+      setFunction([...array, { id: (array[array.length - 1]?.id + 1) || 1, detail: `${type == "check" ? "Cheque" : "Transferencia"} certificado ${payment?.paymentNumber}, presupuesto ${payment?.budget?.title || ""} ${payment?.budget?.supplier?.name || ""} ${payment?.budget?.project?.title || ""}`, account: accounts[0]?.value }])
     }
   }
 
@@ -129,7 +129,7 @@ const NewSubpayment = () => {
                   
                   <h2 className="text-2xl md:text-4xl font-ubuntu border-t-4 pt-4">Transferencias</h2>
                   <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false}/>
-                  <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers)}><FaPlus className="text-4xl cursor pointers" /></Button>
+                  <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers, "transfer")}><FaPlus className="text-4xl cursor pointers" /></Button>
                 </>) : (
                 <>
                   <SelectInput options={[{text:"Dolar", value: "dollar"}, {text: "Pesos", value: "pesos"}]} containerClassName={"!w-full flex justify-between"} className={"!w-full max-w-[300px]"} register={{...register("currency")}}>

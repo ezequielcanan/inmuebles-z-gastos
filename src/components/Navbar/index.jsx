@@ -5,16 +5,17 @@ import { FaCertificate, FaChevronDown, FaMoneyCheckAlt, FaTicketAlt, FaUser, FaU
 import { HiOutlineDocument } from "react-icons/hi"
 import { LuLogOut } from "react-icons/lu"
 import { GiMoneyStack } from "react-icons/gi"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { socket } from "../../socket"
 import CookiesJs from "js-cookie"
 import Button from "../Button"
+import { UserContext } from "../../context/userContext"
 
 const Navbar = ({ user, setUser }) => {
   const [dropdown, setDropdown] = useState("")
   const [width, setWidth] = useState(window.innerWidth)
   const [nav, setNav] = useState(false)
-  const [newNotification, setNewNotification] = useState(false)
+  const {newNotification} = useContext(UserContext)
 
   const headerSections = [
     {
@@ -34,19 +35,6 @@ const Navbar = ({ user, setUser }) => {
       ]
     }
   ]
-
-  useEffect(() => {
-    const onNewMessage = () => {
-      setNewNotification(true)
-      new Audio("/notification.wav").play()
-    }
-
-    socket.on("newMessage", onNewMessage)
-
-    return () => {
-      socket.off("newMessage", onNewMessage)
-    }
-  }, [])
 
   window.addEventListener("resize", e => setWidth(window.innerWidth))
 

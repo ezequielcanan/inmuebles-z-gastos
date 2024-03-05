@@ -1,4 +1,4 @@
-import Router from "./Router/router"
+import Router from "./Router/Router.jsx"
 import customAxios from "./config/axios.config"
 import { useEffect } from "react"
 import { socket } from "./socket"

@@ -1,24 +1,26 @@
-import moment from "moment"
-import Input from "../FormInput/Input"
+import { FaTrashAlt } from "react-icons/fa"
+import customAxios from "../../config/axios.config"
+import { formatNumber } from "../../utils/numbers"
 
-const MovementRow = ({movement, lastMovement}) => {
+const MovementRow = ({movement, setReload}) => {
 
-  const inputProps = {
-    containerClassName: "!border-b-0 !w-full",
-    className: "!bg-transparent !w-full !p-0 !text-xl overflow-x-auto",
-    disabled: true
+  const deleteMovement = async () => {
+    await customAxios.delete(`/movement/${movement?._id}`)
+    setReload(prev => !prev)
   }
 
   return (
     <tr className="border-b-4 border-secondary duration-300">
-      <td className="p-3">{moment.utc(movement?.emissionDate).format("DD-MM-YYYY")}</td>
-      <td className="p-3">{moment.utc(movement?.expirationDate).format("DD-MM-YYYY")}</td>
+      <td className="p-3">{movement?.emissionDate}</td>
+      <td className="p-3">{movement?.expirationDate}</td>
       <td className="p-3">{movement?.checkCode}</td>
       <td className="p-3">{movement?.detail}</td>
-      <td className="p-3">{movement?.credit}</td>
-      <td className="p-3">{movement?.debit}</td>
-      <td className="p-3">{movement?.tax * movement?.credit}</td>
-      <td className="p-3">{movement?.credit * 0.006}</td>
+      <td className="p-3">{formatNumber(movement?.credit)}</td>
+      <td className="p-3">{formatNumber(movement?.debit)}</td>
+      <td className="p-3">{formatNumber(movement?.tax)}</td>
+      <td className="p-3">{formatNumber(movement?.sixThousandths)}</td>
+      <td className="p-3">{formatNumber(movement?.balance)}</td>
+      {movement?.canBeDeleted != false && <td className="p-3 text-red-600"><FaTrashAlt className="cursor-pointer" onClick={() => deleteMovement()}/></td>}
     </tr>
   )
 }

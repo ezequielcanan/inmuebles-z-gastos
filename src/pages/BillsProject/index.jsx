@@ -9,7 +9,7 @@ import Section from "../../containers/Section"
 import BudgetCard from "../../components/BudgetCard"
 import SupplierCard from "../../components/SupplierCard"
 
-const Project = ({title = "", backPath = "/projects", path = "projects"}) => {
+const BillsProject = () => {
   const { pid } = useParams()
   const [project, setProject] = useState()
   const [suppliers, setSuppliers] = useState()
@@ -28,18 +28,18 @@ const Project = ({title = "", backPath = "/projects", path = "projects"}) => {
     })
   }, [])
 
-  return ( 
+  return (
     <Main className={"flex flex-col pt-[150px] gap-y-[40px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to={backPath}><FaChevronLeft size={50}/></Link>
+      <Link to={`/bills`}><FaChevronLeft size={50}/></Link>
       {project ? (
         project != "error" ? (
           <>
             <Section>
-              <Title>{title}{project.title}</Title>
+              <Title>Facturas {project.title}</Title>
             </Section>
             <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
               {suppliers?.length ? suppliers?.map((supplier) => {
-                return <SupplierCard key={supplier?._id} title={supplier?.name} referrer={supplier?.referrer} budgets={supplier?.budgets} path={`/${path}/${pid}/${supplier?._id}`} id={supplier?._id}/>
+                return <SupplierCard key={supplier?._id} title={supplier?.name} referrer={supplier?.referrer} budgets={supplier?.budgets} path={`/bills/${pid}/${supplier?._id}`} id={supplier?._id}/>
               }) : <h2>No hay presupuestos de este proyecto</h2>}
             </section>
           </>
@@ -53,4 +53,4 @@ const Project = ({title = "", backPath = "/projects", path = "projects"}) => {
   )
 }
 
-export default Project
+export default BillsProject

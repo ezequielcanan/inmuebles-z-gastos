@@ -5,9 +5,9 @@ import Title from "../../components/Title"
 import Main from "../../containers/Main"
 import customAxios from "../../config/axios.config"
 
-const Projects = () => {
+const Projects = ({title = "Proyectos", path = ""}) => {
   const [projects, setProjects] = useState(false)
-
+  
   useEffect(() => {
     customAxios.get("/projects?filter=false").then(res => {
       setProjects(res?.data?.payload || [])
@@ -19,12 +19,13 @@ const Projects = () => {
   return (
     <Main className={"flex flex-col gap-y-[70px]"} paddings>
       <section>
-        <Title className={"text-center xl:text-start"}>Proyectos</Title>
+        <Title className={"text-center xl:text-start"}>{title}</Title>
       </section>
       <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-2 2xl:grid-cols-3">
         {projects.length ? (
           projects.map((project,i) => {
-            return <ProjectCard thumbnail={project.thumbnail} title={project.title} id={project?._id} key={project?._id}/>
+            const cardPath = path ? `/${path}/${project?._id}` : path
+            return <ProjectCard thumbnail={project.thumbnail} title={project.title} id={project?._id} key={project?._id} path={cardPath}/>
           })
         ) : (
           <BounceLoader/>

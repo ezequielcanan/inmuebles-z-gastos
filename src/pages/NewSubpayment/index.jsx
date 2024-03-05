@@ -53,7 +53,9 @@ const NewSubpayment = () => {
   const whiteSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
     data.date = data.date || moment()
-    payment?.white?.bills.length && (data.retention = { amount: data.retention, code: data.retentionNumber })
+    if (data?.retention) data.retention.detail = `Retencion N° ${data?.retention?.code}, certificado ${payment?.paymentNumber}, presupuesto ${payment?.budget?.title || ""} ${payment?.budget?.supplier?.name || ""} ${payment?.budget?.project?.title || ""}`
+
+
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
 
@@ -81,6 +83,7 @@ const NewSubpayment = () => {
     data.transfers = transferResult.payload.map((t, i) => t._id)
     data.materials = {material: data.materialsMaterial, amount: data.materialsAmount, date: data.materialsDate} 
     const paymentResult = (await customAxios.post(`/white-payment/${pid}`, data)).data
+
     navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
   })
 
@@ -105,18 +108,24 @@ const NewSubpayment = () => {
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
               <Input type="date" containerClassName={"!w-full"} register={{...register("date")}}>
-                <Label name={"date"} text={"Fecha:"} />
+                <Label name={"date"} text={"Fecha del pago:"} />
               </Input>
               {type == "a" ? (
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
                     <>
-                      <Input register={{ ...register("retention") }} placeholder={"$"}>
+                      <Input type="date" containerClassName={"!w-full"} register={{...register("retention.date")}}>
+                        <Label name={"date"} text={"Fecha de retencion:"} />
+                      </Input>
+                      <Input register={{ ...register("retention.amount") }} placeholder={"$"}>
                         <Label text={"Retencion:"} />
                       </Input>
-                      <Input register={{ ...register("retentionNumber") }}>
+                      <Input register={{ ...register("retention.code") }}>
                         <Label text={"Numero de retencion:"} />
                       </Input>
+                      <SelectInput options={accounts} className={"!w-full"} register={{ ...register("retention.account") }}>
+                        <Label text={"Cuenta retencion:"} />
+                      </SelectInput>
                     </>}
                   <Input className={"!w-full max-w-[250px]"} placeholder={"TOTAL"} register={{...register("materialsAmount")}}>
                     <Label text={"Materiales"} name={"materialsAmount"}/>

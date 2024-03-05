@@ -103,6 +103,13 @@ const Budget = () => {
     }
   }
 
+  const changeBudgetState = async () => {
+    if (budget) {
+      const result = (await customAxios.put(`/budget/${bid}`, {active: !budget?.active})).data
+      setReload(!reload)
+    }
+  }
+
   const addNote = async () => {
     const result = (await customAxios.post(`/budget/${bid}/notes`, { date: moment(), note: "" })).data
     setBudget(result?.payload)
@@ -142,7 +149,10 @@ const Budget = () => {
             </Link>
           </Section>
           <section className="flex flex-col items-start gap-y-[30px]">
-            <Subtitle className={"w-full sm:w-auto"}>Datos del presupuesto:</Subtitle>
+            <div className="flex flex-col sm:flex-row gap-8 justify-between items-center w-full">
+              <Subtitle className={"w-full sm:w-auto"}>Datos del presupuesto:</Subtitle>
+              <Button onClick={changeBudgetState}>Estado: {budget?.active ? "Vigente" : "Finalizado"}</Button>
+            </div>
             <div className="grid grid-flow-row md:grid-cols-2 lg:grid-cols-3 p-2 w-full gap-2 bg-white">
               <p className="text-3xl bg-secondary py-3 px-3">Total: {formatNumber(budget?.total)}</p>
               <p className="text-3xl bg-secondary py-3 px-3">Pagado: {formatNumber(budget?.advanced)}</p>

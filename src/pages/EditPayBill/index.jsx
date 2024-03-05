@@ -16,10 +16,10 @@ import Input from "../../components/FormInput/Input"
 import { FaChevronLeft } from "react-icons/fa"
 import PaymentMethodForm from "../../components/PaymentMethodForm/index.jsx"
 
-const PayBill = () => {
+const EditPayBill = () => {
   const { billId, pid, sid } = useParams()
   const { register, handleSubmit } = useForm()
-  const [accounts, setAccounts] = useState([])
+  const [accounts, setAccounts] = useState(false)
   const [checks, setChecks] = useState([])
   const [transfers, setTransfers] = useState([])
   const [bill, setBill] = useState(false)
@@ -27,6 +27,14 @@ const PayBill = () => {
 
   useEffect(() => {
     customAxios.get(`/bill/${billId}`).then(res => {
+      const resChecks = res?.data?.payload?.checks
+      const resTransfers = res?.data?.payload?.transfers
+      setChecks(resChecks.map((check, i) => {
+        return { ...check, emissionDate: moment.utc(check.emissionDate).format("YYYY-MM-DD"), expirationDate: moment.utc(check.expirationDate).format("YYYY-MM-DD"), old: true, id: i }
+      }))
+      setTransfers(resTransfers.map((transfer, i) => {
+        return { ...transfer, emissionDate: moment.utc(transfer.emissionDate).format("YYYY-MM-DD"), old: true, id: i }
+      }))
       setBill(res?.data?.payload || {})
     }).catch(e => {
       setBill("error")
@@ -49,8 +57,8 @@ const PayBill = () => {
     data.date = data.date || moment()
     if (data?.retention) data.retention.detail = `Retencion N° ${data?.retention?.code}, factura ${bill?.code}, ${bill?.receiver?.name || ""} ${bill?.project?.title || ""}`
 
-    const checksResult = (await customAxios.post("/check", checks)).data
-    const transferResult = (await customAxios.post("/transfer", transfers)).data
+    const checksResult = (await customAxios.post("/check", checks.filter((check) => !check.old))).data
+    const transferResult = (await customAxios.post("/transfer", transfers.filter((transfer) => !transfer.old))).data
 
     await Promise.all(checksResult?.payload?.map(async (check, i) => {
       if (checks[i].file) {
@@ -72,9 +80,12 @@ const PayBill = () => {
       }
     }))
 
-    data.checks = checksResult.payload.map((c, i) => c._id)
-    data.transfers = transferResult.payload.map((t, i) => t._id)
-    const result = (await customAxios.post(`/bill/${billId}/pay`, data)).data
+    const updateChecksResult = (await customAxios.put("/check", checks.filter((check) => check.old))).data
+    const updateTransfersResult = (await customAxios.put("/transfer", transfers.filter((transfer) => transfer.old))).data
+
+    data.checks = [...checksResult.payload.map((c, i) => c._id), ...updateChecksResult.payload.map((c, i) => c._id)]
+    data.transfers = [...transferResult.payload.map((t, i) => t._id), ...updateTransfersResult.payload.map((t, i) => t._id)]
+    const result = (await customAxios.put(`/bill/${billId}`, data)).data
     navigate(`/projects/${bill?.project?._id}/${bill?.receiver?._id}/${billId}`)
   })
 
@@ -87,34 +98,34 @@ const PayBill = () => {
 
   return (
     <Main className={"grid items-center gap-4 justify-center"} paddings>
-      {(bill && bill != "error") ? (
+      {(bill && bill != "error" && Array?.isArray(accounts)) ? (
         <>
           <Section className={"gap-x-[40px] items-center"}>
             <Link to={`/projects/${pid}/${sid}/${billId}`}>
-              <FaChevronLeft className="text-4xl"/>
+              <FaChevronLeft className="text-4xl" />
             </Link>
             <Title>Pago Factura {bill?.code}: {bill?.project?.title} - {bill?.receiver?.name}</Title>
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
-              <Input type="date" containerClassName={"!w-full"} register={{...register("retention.date")}}>
+              <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.date") }} defaultValue={moment.utc(bill?.retention?.date).format("YYYY-MM-DD")}>
                 <Label name={"date"} text={"Fecha de retencion:"} />
               </Input>
-              <Input register={{ ...register("retention.amount") }} placeholder={"$"}>
+              <Input register={{ ...register("retention.amount") }} placeholder={"$"} defaultValue={bill?.retention?.amount}>
                 <Label text={"Retencion:"} />
               </Input>
-              <Input register={{ ...register("retention.code") }}>
+              <Input register={{ ...register("retention.code") }} defaultValue={bill?.retention?.code}>
                 <Label text={"Numero de retencion:"} />
               </Input>
-              <SelectInput options={accounts} className={"!w-full"} register={{ ...register("retention.account") }}>
+              <SelectInput options={accounts} className={"!w-full"} register={{ ...register("retention.account") }} defaultValue={bill?.retention?.account || accounts[0]?._id}>
                 <Label text={"Cuenta retencion:"} />
               </SelectInput>
               <h2 className="text-2xl md:text-4xl font-ubuntu">Cheques</h2>
-              <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts}/>
+              <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts} />
               <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj()}><FaPlus className="text-4xl cursor pointers" /></Button>
-              
+
               <h2 className="text-2xl md:text-4xl font-ubuntu border-t-4 pt-4">Transferencias</h2>
-              <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false}/>
+              <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} endpoint="transfer" placeholder="transferencia" expiration={false} />
               <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers, "transfer")}><FaPlus className="text-4xl cursor pointers" /></Button>
               <Button className={"text-black"} type="submit" style="submit">Enter</Button>
             </Form>
@@ -127,4 +138,4 @@ const PayBill = () => {
   )
 }
 
-export default PayBill
+export default EditPayBill

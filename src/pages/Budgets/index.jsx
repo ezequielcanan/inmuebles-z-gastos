@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import customAxios from "../../config/axios.config"
 import { BounceLoader } from "react-spinners"
 import BudgetCard from "../../components/BudgetCard"
+import Subtitle from "../../components/Subtitle"
 
 const Budgets = () => {
   const [budgets, setBudgets] = useState(false)
@@ -23,23 +24,35 @@ const Budgets = () => {
 
 
   return (
-    <Main className={"flex flex-col gap-y-[70px]"} paddings>
+    <Main className={"flex flex-col gap-y-[70px] pb-[120px]"} paddings>
       <Section>
         <Title>
           Presupuestos
         </Title>
         <Link to={"/budgets/new"}>
-          <Button>Agregar presupuesto <FaPlus/></Button>
+          <Button>Agregar presupuesto <FaPlus /></Button>
         </Link>
       </Section>
-      <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
+      <section className="grid gap-8 justify-items-center md:grid-cols-3">
         {(budgets && budgets != "error") ? (
-            budgets.map((budget,i) => {
-              return <BudgetCard budget={budget} key={budget?._id} setReload={setReload}/>
+          budgets.map((budget, i) => {
+            if (budget?.active) return <BudgetCard budget={budget} key={budget?._id} setReload={setReload} />
+          })
+        ) : (
+          !budgets?.length ? <p>No hay presupuestos</p> : <BounceLoader />
+        )}
+      </section>
+      <section className="flex flex-col gap-y-[70px]">
+        <Subtitle className={"self-start"}>Finalizados</Subtitle>
+        <div className="grid gap-8 justify-items-center md:grid-cols-3">
+          {(budgets && budgets != "error" && budgets?.some((b) => !b.active)) ? (
+            budgets.map((budget, i) => {
+              if (!budget?.active) return <BudgetCard budget={budget} key={budget?._id} setReload={setReload} />
             })
           ) : (
-            !budgets?.length ? <p>No hay presupuestos</p> : <BounceLoader/>
+            <p>No hay presupuestos</p>
           )}
+        </div>
       </section>
     </Main>
   )

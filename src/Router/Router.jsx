@@ -29,6 +29,9 @@ import ProjectAndSupplierBudgets from "../pages/ProjectAndSupplierBudgets"
 import NewBill from "../pages/NewBill"
 import Notifications from "../pages/Notifications"
 import PayBill from "../pages/PayBill"
+import EditPayBill from "../pages/EditPayBill"
+import ProjectAndSupplierBills from "../pages/ProjectAndSupplierBills"
+import ProjectAndSupplierCertificates from "../pages/ProjectAndSupplierCertificates"
 
 const Router = () => {
   const { getUser, setUser } = useContext(UserContext)
@@ -57,6 +60,7 @@ const Router = () => {
             <Route path="/projects/:pid/:sid/new-bill" element={<NewBill/>}/>
             <Route path="/projects/:pid/:sid/:billId" element={<Bill path={false} movements/>}/>
             <Route path="/projects/:pid/:sid/:billId/pay" element={<PayBill/>}/>
+            <Route path="/projects/:pid/:sid/:billId/edit" element={<EditPayBill/>}/>
             <Route path="/budgets" element={<Budgets/>}/>
             <Route path="/budgets/:bid" element={<Budget/>}/>
             <Route path="/budgets/:bid/payments/new" element={<NewPayment/>}/>
@@ -72,6 +76,12 @@ const Router = () => {
             <Route path="/accounts/new" element={<NewAccount/>}/>
             <Route path="/user" element={<User/>}/>
             <Route path="/notifications" element={<Notifications/>}/>
+            <Route path="/bills" element={<Projects title="Facturas" path={`bills`}/>}/>
+            <Route path="/bills/:pid" element={<Project path="bills" title="Facturas de " backPath="/bills"/>}/>
+            <Route path="/bills/:pid/:sid" element={<ProjectAndSupplierBills/>}/>
+            <Route path="/payments" element={<Projects title="Certificados" path="payments"/>}/>
+            <Route path="/payments/:pid" element={<Project path="payments" title="Certificados de " backPath="/payments"/>}/>
+            <Route path="/payments/:pid/:sid" element={<ProjectAndSupplierCertificates/>}/>
           </>
         )}
       </Routes>

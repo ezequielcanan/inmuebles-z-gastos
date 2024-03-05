@@ -74,7 +74,9 @@ const EditSubpayment = () => {
   const whiteSubmit = handleSubmit(async data => {
     data.cashPaid = { total: data.cashPaid || 0, account: data.account }
     data.date = data.date || moment()
-    payment?.white?.bills.length && (data.retention = { amount: data.retention, code: data.retentionNumber })
+    if (data?.retention) data.retention.detail = `Retencion N° ${data?.retention?.code}, certificado ${payment?.paymentNumber}, presupuesto ${payment?.budget?.title || ""} ${payment?.budget?.supplier?.name || ""} ${payment?.budget?.project?.title || ""}`
+
+
     const checksResult = (await customAxios.post("/check", checks.filter((check) => !check.old))).data
     const transferResult = (await customAxios.post("/transfer", transfers.filter((transfer) => !transfer.old))).data
 
@@ -135,12 +137,18 @@ const EditSubpayment = () => {
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
                     <>
-                      <Input register={{ ...register("retention") }} defaultValue={subpayment?.retention?.amount} placeholder={"$"}>
+                      <Input type="date" containerClassName={"!w-full"} defaultValue={moment.utc(subpayment?.retention?.date).format("YYYY-MM-DD")} register={{...register("retention.date")}}>
+                        <Label name={"date"} text={"Fecha de retencion:"} />
+                      </Input>
+                      <Input register={{ ...register("retention.amount") }} defaultValue={subpayment?.retention?.amount} placeholder={"$"}>
                         <Label text={"Retencion:"} />
                       </Input>
-                      <Input register={{ ...register("retentionNumber") }} defaultValue={subpayment?.retention?.code}>
+                      <Input register={{ ...register("retention.code") }}defaultValue={subpayment?.retention?.code} >
                         <Label text={"Numero de retencion:"} />
                       </Input>
+                      <SelectInput options={accounts} className={"!w-full"} defaultValue={subpayment?.retention?.account} register={{ ...register("retention.account") }}>
+                        <Label text={"Cuenta retencion:"} />
+                      </SelectInput>
                     </>}
                   <Input className={"!w-full max-w-[250px]"} placeholder={"TOTAL"} register={{ ...register("materialsAmount") }} defaultValue={subpayment?.materials?.amount}>
                     <Label text={"Materiales"} name={"materialsAmount"} />

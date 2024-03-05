@@ -13,7 +13,7 @@ const NotificationCard = ({ message }) => {
     </div>
   </div>
   return (
-    message?.type == "certificate" ? <Link to={`/budgets/${message?.data?.budget?._id}/payments/${message?.data?.payment?._id}/a/new`}>{card}</Link> : {card}
+    <Link to={message?.type == "certificate" ? `/budgets/${message?.data?.budget?._id}/payments/${message?.data?.payment?._id}/a/new` : `/projects/${message?.data?.bill?.project}/${message?.data?.bill?.receiver}/${message?.data?.bill?._id}/pay`}>{card}</Link>
   )
 }
 

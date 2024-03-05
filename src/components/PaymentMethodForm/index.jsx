@@ -41,7 +41,7 @@ const PaymentMethodForm = ({paymentMethod, setPaymentMethod, accounts, payment, 
             </Button>
             <Input className={"!w-full max-w-[250px]"} placeholder={`N° de ${placeholder}`} value={payment?.code} onChange={e => onChangePropertiesState("code", e?.currentTarget?.value, payment?.id)} />
             <Input type="number" className={"!w-full max-w-[250px]"} value={payment?.amount} placeholder={"Monto"} onChange={e => onChangePropertiesState("amount", e?.currentTarget?.value, payment?.id)} />
-            <SelectInput options={accounts} className={"!w-full"} value={payment?.account} onChange={(e) => onChangePropertiesState("account", e?.currentTarget?.value, payment?.id)} />
+            <SelectInput options={accounts} className={"!w-full"} value={typeof(payment?.account) == "string" ? payment?.account : payment?.account?._id} onChange={(e) => onChangePropertiesState("account", e?.currentTarget?.value, payment?.id)} />
           </div>
           <div className="flex items-center justify-end w-full gap-x-4">
             <Input type="date" containerClassName={"!w-full grid"} value={payment?.emissionDate} onChange={e => onChangePropertiesState("emissionDate", e?.currentTarget?.value, payment?.id)}>

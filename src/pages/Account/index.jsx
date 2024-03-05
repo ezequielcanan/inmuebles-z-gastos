@@ -7,7 +7,7 @@ import Section from "../../containers/Section"
 import customAxios from "../../config/axios.config"
 import Subtitle from "../../components/Subtitle"
 import Button from "../../components/Button"
-import { FaEdit, FaPlus } from "react-icons/fa"
+import { FaEdit, FaFileDownload, FaPlus } from "react-icons/fa"
 import MovementRow from "../../components/MovementRow"
 import Input from "../../components/FormInput/Input"
 import Label from "../../components/Label"
@@ -51,8 +51,6 @@ const Account = () => {
     setEditing(false)
     setReload(!reload)
   })
-  
-  let lastRow = {}
 
 
   return (
@@ -80,6 +78,9 @@ const Account = () => {
               <Input register={{ ...register("name") }} defaultValue={account?.name} disabled={!editing} containerClassName={"!border-b-0 !w-full !justify-start"} className={"!text-2xl"}>
                 <Label text={"Titular"} name={"name"} className={"!text-2xl"} />
               </Input>
+              <Input register={{ ...register("initialBalance") }} type="number" defaultValue={account?.initialBalance} disabled={!editing} containerClassName={"!border-b-0 !w-full !justify-start"} className={"!text-2xl"}>
+                <Label text={"Saldo inicial:"} name={"initialBalance"} className={"!text-2xl"} />
+              </Input>
               {editing && <Button style="submit" type="submit" className={"!text-xl self-start border-4 border-black"}>
                 Actualizar cuenta
               </Button>}
@@ -95,7 +96,10 @@ const Account = () => {
               </Link>
             </div>
             <div className="overflow-x-auto w-full flex flex-col gap-y-[30px]">
-              <Button className="self-start bg-third hover:after:!left-[-100%] !text-black border-2 border-black" onClick={() => setFilter(!filter)}>Ordenado por: {filter ? "Vencimiento" : "Emisión"}</Button>
+              <div className="flex justify-between items-center">
+                <Button className="self-start bg-third hover:after:!left-[-100%] !text-black border-2 border-black" onClick={() => setFilter(!filter)}>Ordenado por: {filter ? "Vencimiento" : "Emisión"}</Button>
+                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/account/excel/${aid}?filter=${filter}`} className="text-success text-5xl"><FaFileDownload/></a>
+              </div>
               <table className="w-full border-4 border-b-0 border-secondary">
                 <thead className="w-full border-b-4 border-secondary">
                   <tr>
@@ -108,12 +112,12 @@ const Account = () => {
                     <th className="text-start p-3 whitespace-nowrap bg-secondary text-2xl text-white">Brutos</th>
                     <th className="text-start p-3 whitespace-nowrap bg-secondary text-2xl text-white">6XMIL</th>
                     <th className="text-start p-3 whitespace-nowrap bg-secondary text-2xl text-white">Saldo</th>
+                    <th className="text-start p-3 whitespace-nowrap bg-secondary text-2xl text-white">Borrar</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {movements.map((movement) => {
-                    lastRow = { ...movement }
-                    return <MovementRow movement={movement} key={movement?._id} />
+                  {movements.map((movement, i) => {
+                    return <MovementRow movement={movement} key={i} setReload={setReload}/>
                   })}
                 </tbody>
               </table>

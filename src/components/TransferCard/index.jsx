@@ -15,9 +15,9 @@ const TransferCard = ({transfer, thumbnail, anchorThumbnail, payment}) => {
       <div className="flex flex-col gap-y-[30px]">
         <div className="flex justify-between gap-x-[10px]">
           <h3 className="text-3xl font-bold">Transferencia: {transfer.code}</h3>
-          <a href={`${import.meta.env.VITE_REACT_API_URL}${anchorThumbnail}/${documentSrc}`} download>
+          {documentSrc && <a href={`${import.meta.env.VITE_REACT_API_URL}${anchorThumbnail}/${documentSrc}`} download>
             <FaFileDownload size={30}/>
-          </a>
+          </a>}
         </div>
         <h4 className="text-3xl font-bold">Total: ${transfer?.amount}</h4>
       </div>

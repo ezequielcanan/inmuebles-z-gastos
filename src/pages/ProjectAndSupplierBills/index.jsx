@@ -12,10 +12,10 @@ import Button from "../../components/Button"
 import BillCard from "../../components/BilllCard"
 import { FaFileDownload } from "react-icons/fa"
 
-const ProjectAndSupplierBudgets = () => {
+
+const ProjectAndSupplierBills = () => {
   const { pid, sid } = useParams()
   const [project, setProject] = useState()
-  const [budgets, setBudgets] = useState([])
   const [bills, setBills] = useState([])
 
   useEffect(() => {
@@ -32,22 +32,15 @@ const ProjectAndSupplierBudgets = () => {
     })
   }, [])
 
-  useEffect(() => {
-    customAxios.get(`/budget/project/${pid}?sid=${sid}`).then(res => {
-      setBudgets(res?.data?.payload)
-    })
-  }, [])
-
   return (
     <Main className={"flex flex-col pt-[150px] pb-[120px] gap-y-[70px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to={`/projects/${pid}`}><FaChevronLeft size={50} /></Link>
+      <Link to={`/bills/${pid}`}><FaChevronLeft size={50} /></Link>
       {project ? (
         project != "error" ? (
           <>
             <Section>
-              <Title>{project.title} - {budgets[0]?.supplier?.name}</Title>
+              <Title>Facturas {project.title} - {bills[0]?.receiver?.name}</Title>
               <div className="flex gap-x-[25px] items-center">
-                <a href={`${import.meta.env.VITE_REACT_API_URL}/api/projects/excel/${pid}/${sid}`} download className="text-5xl text-success"><FaFileDownload/></a>
                 <Link to={`/projects/${pid}/${sid}/new-bill`}>
                   <Button>
                     Nueva factura
@@ -56,19 +49,10 @@ const ProjectAndSupplierBudgets = () => {
               </div>
             </Section>
             <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-              {budgets?.length ? budgets?.map((budget) => {
-                return <BudgetCard key={budget?._id} budget={budget} />
-              }) : <h2>No hay presupuestos de este proyecto</h2>}
+              {bills.map((bill) => {
+                return <BillCard path={`/projects/${pid}/${sid}/${bill?._id}`} bill={{ bill }} concept={false} key={bill?._id} />
+              })}
             </section>
-            {bills?.length ? (
-              <section className="flex flex-col gap-y-[30px]">
-                <Subtitle className={"self-start"}>Facturas</Subtitle>
-                <div className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-                  {bills.map((bill) => {
-                    return <BillCard path={`/projects/${pid}/${sid}/${bill?._id}`} bill={{ bill }} concept={false} key={bill?._id} />
-                  })}
-                </div>
-              </section>) : null}
           </>
         ) : (
           <Title className={"text-center"}>No existe ese proveedor</Title>
@@ -80,4 +64,4 @@ const ProjectAndSupplierBudgets = () => {
   )
 }
 
-export default ProjectAndSupplierBudgets
+export default ProjectAndSupplierBills

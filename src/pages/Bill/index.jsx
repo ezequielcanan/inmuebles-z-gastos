@@ -60,7 +60,7 @@ const Bill = ({ path = true, movements = false }) => {
 
   const deleteBill = async () => {
     await customAxios.delete(`/bill/${billId}/${pid}`)
-    navigate(`/budgets/${bid}/payments/${pid}`)
+    navigate(path ? `/budgets/${bid}/payments/${pid}` : `/projects/${pid}/${sid}`)
   }
 
   const addBalanceNote = async () => {
@@ -96,8 +96,16 @@ const Bill = ({ path = true, movements = false }) => {
                   <FaFileDownload className="text-5xl text-cyan-600" />
                 </a>
               )}
-              <Link className="text-5xl text-green-700" to={`pay`}><FaMoneyBillTransfer/></Link>
-              <FaTrashAlt className="text-5xl text-primary" onClick={deleteBill} />
+              {!path && (
+                <>
+                  {(bill?.checks?.length || bill?.transfers?.length || bill?.retention) ? (
+                    <Link className="text-5xl text-blue-700" to={`edit`}><FaEdit /></Link>
+                  ) : (
+                    <Link className="text-5xl text-green-700" to={`pay`}><FaMoneyBillTransfer /></Link>
+                  )}
+                </>
+              )}
+              <FaTrashAlt className="text-5xl text-primary cursor-pointer" onClick={deleteBill} />
             </div>
           </Section>
           <section className="flex flex-col gap-y-[30px] items-start">
@@ -135,16 +143,16 @@ const Bill = ({ path = true, movements = false }) => {
               <Subtitle>Cheques</Subtitle>
               <div className="grid md:grid-cols-3 gap-8">
                 {bill?.checks?.length ? bill?.checks?.map((check) => {
-                  return <CheckCard key={check?._id} check={check} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`}/>
+                  return <CheckCard key={check?._id} check={check} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`} />
                 }) : <p>No hay cheques</p>}
               </div>
             </section>
             <section className="flex flex-col gap-y-[30px] items-start">
               <Subtitle>Transferencias</Subtitle>
               <div className="grid md:grid-cols-3 gap-8">
-                {bill?.transfers?.map((transfer) => {
-                  return <TransferCard key={transfer?._id} transfer={transfer} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`}/>
-                })}
+                {bill?.checks?.length ? bill?.transfers?.map((transfer) => {
+                  return <TransferCard key={transfer?._id} transfer={transfer} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`} />
+                }) : <p>No hay transferencias</p>}
               </div>
             </section>
           </>}

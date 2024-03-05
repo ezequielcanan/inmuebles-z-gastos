@@ -16,6 +16,8 @@ import Input from "../../components/FormInput/Input";
 import Label from "../../components/Label";
 import Form from "../../components/Form"
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import CheckCard from "../../components/CheckCard";
+import TransferCard from "../../components/TransferCard";
 
 const Bill = ({ path = true, movements = false }) => {
   const { billId, bid, pid, sid } = useParams();
@@ -56,12 +58,6 @@ const Bill = ({ path = true, movements = false }) => {
     }
   }, [])
 
-  if (movements) {
-    useEffect(() => {
-      console.log("Asdasdasd")
-    }, [])
-  }
-
   const deleteBill = async () => {
     await customAxios.delete(`/bill/${billId}/${pid}`)
     navigate(`/budgets/${bid}/payments/${pid}`)
@@ -89,13 +85,13 @@ const Bill = ({ path = true, movements = false }) => {
     <Main className={"flex flex-col gap-y-[70px] py-[100px]"} paddings>
       {bill && bill != "error" ? (
         <>
-          <Link to={path ? `/budgets/${bid}/payments/${pid}` : `/projects/${pid}/${bill?.receiver}`}>
+          <Link to={path ? `/budgets/${bid}/payments/${pid}` : `/projects/${pid}/${bill?.receiver?._id}`}>
             <FaChevronLeft className="text-4xl" />
           </Link>
           <Section>
             <Title>Factura Código: {bill?.code}</Title>
             <div className="flex gap-x-[20px] items-center">
-              {documentSrc && (
+              {documentSrc?.includes(".") && (
                 <a href={path ? `${import.meta.env.VITE_REACT_API_URL}/static/projects/${payment?.budget?.project?._id}/budgets/${payment?.budget?._id}/payments/${payment?._id}/bill/${billId}/${documentSrc}` : `${import.meta.env.VITE_REACT_API_URL}/static/projects/${pid}/supplier/${sid}/bill/${billId}/${documentSrc}`} download>
                   <FaFileDownload className="text-5xl text-cyan-600" />
                 </a>
@@ -134,6 +130,24 @@ const Bill = ({ path = true, movements = false }) => {
               {edit && <Button type="submit" className={"border-4 rounded border-black"} style="submit">Confirmar</Button>}
             </Form>
           </section>
+          {!path && <>
+            <section className="flex flex-col gap-y-[30px] items-start">
+              <Subtitle>Cheques</Subtitle>
+              <div className="grid md:grid-cols-3 gap-8">
+                {bill?.checks?.length ? bill?.checks?.map((check) => {
+                  return <CheckCard key={check?._id} check={check} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/checks/${check?._id}`}/>
+                }) : <p>No hay cheques</p>}
+              </div>
+            </section>
+            <section className="flex flex-col gap-y-[30px] items-start">
+              <Subtitle>Transferencias</Subtitle>
+              <div className="grid md:grid-cols-3 gap-8">
+                {bill?.transfers?.map((transfer) => {
+                  return <TransferCard key={transfer?._id} transfer={transfer} thumbnail={`/public/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`} anchorThumbnail={`/static/projects/${bill?.project?._id}/supplier/${bill?.receiver?._id}/bill/${bill?._id}/transfers/${transfer?._id}`}/>
+                })}
+              </div>
+            </section>
+          </>}
           <section className="flex flex-col gap-y-[30px] items-start">
             <Subtitle>Notas de crédito/débito</Subtitle>
             <div className="grid md:grid-cols-3 gap-8">

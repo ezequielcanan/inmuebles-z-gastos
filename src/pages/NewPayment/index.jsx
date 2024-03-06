@@ -73,11 +73,12 @@ const NewPayment = () => {
 
     const fileResult = (await customAxios.post(`/payment/files`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data
 
-    user?.notifications?.forEach((u) => {
+    await Promise.all(user?.notifications?.map(async (u) => {
       const messageObj = {title: "Nuevo Certificado", text: `Presupuesto: ${budget?.title} de ${budget?.supplier?.name} en el proyecto ${budget?.project?.title}. Nuevo certificado n° ${result?.payload?.paymentNumber}, fecha ${moment.utc(result?.payload?.date).format("DD-MM-YYYY")}. El total de este certificado es de $${result?.payload?.total || 0}, representando un %${result?.payload?.percentageOfTotal}. Consultar por el total en A.`, dateTime: moment(), from: user?._id, to: u?.user, type: "certificate", data: {budget, payment: result?.payload, lastPayment: budget?.lastPayment}}
-      
-      if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageObj, receiver: u?.user})
-    })
+      const messageResult = (await customAxios.post(`/message`, messageObj)).data
+
+      if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageResult?.payload, receiver: u?.user})
+    }))
 
     navigate(`/budgets/${budget?._id}`)
   })

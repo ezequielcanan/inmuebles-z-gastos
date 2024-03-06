@@ -56,14 +56,12 @@ const NewBill = () => {
 
     const fileResult = (await customAxios.post(`/bill/file/${pid}`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data
 
-    user?.notifications?.forEach((u) => {
+    await Promise.all(user?.notifications?.map(async (u) => {
       const messageObj = {title: "Nueva factura", text: `Projecto: ${project?.title}. Proveedor: ${supplier?.name}. Nueva factura n° ${result?.payload?.code}, fecha ${moment.utc(result?.payload?.emissionDate).format("DD-MM-YYYY")}. Neto $${result?.payload?.amount || 0}. Total: $${result?.payload?.amount * (1 + (((result?.payload?.iva || 0) + (result?.payload?.taxes || 0)) / 100))}`, dateTime: moment(), from: user?._id, to: u?.user, type: "bill", data: {bill: result?.payload}}
-      
-      if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageObj, receiver: u?.user})
-      socket.on("result", result => {
-        console.log(result)
-      })
-    })
+      const messageResult = (await customAxios.post(`/message`, messageObj)).data
+
+      if (u?.role == "expenses" || u?.role == "both") socket.emit("sendMessage", {message: messageResult?.payload, receiver: u?.user})
+    }))
 
 
 

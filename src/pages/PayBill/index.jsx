@@ -48,6 +48,7 @@ const PayBill = () => {
   const onSubmit = handleSubmit(async data => {
     data.date = data.date || moment()
     if (data?.retention) data.retention.detail = `Retencion N° ${data?.retention?.code}, factura ${bill?.code}, ${bill?.receiver?.name || ""} ${bill?.project?.title || ""}`
+    console.log(data)
 
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
@@ -106,7 +107,7 @@ const PayBill = () => {
               <Input register={{ ...register("retention.code") }}>
                 <Label text={"Numero de retencion:"} />
               </Input>
-              <SelectInput options={accounts} className={"!w-full"} register={{ ...register("retention.account") }}>
+              <SelectInput options={accounts} className={"!w-full"} defaultValue={accounts[0]?.value} register={{ ...register("retention.account") }}>
                 <Label text={"Cuenta retencion:"} />
               </SelectInput>
               <h2 className="text-2xl md:text-4xl font-ubuntu">Cheques</h2>

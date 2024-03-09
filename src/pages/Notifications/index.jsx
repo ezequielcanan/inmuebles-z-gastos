@@ -4,14 +4,19 @@ import Section from "../../containers/Section"
 import Main from "../../containers/Main"
 import Title from "../../components/Title"
 import NotificationCard from "../../components/NotificationCard"
+import customAxios from "../../config/axios.config"
 
 const Notifications = () => {
   const [messages, setMessages] = useState(false)
-  const { getUser, messages: messagesContext, setNewNotification } = useContext(UserContext)
+  const { userData, getUser, messages: messagesContext, setNewNotification } = useContext(UserContext)
 
   useEffect(() => {
-    setMessages(messagesContext)
-    setNewNotification(false)
+    if (userData?._id) {
+      customAxios.get(`/message/${userData?._id}`).then(res => {
+        setMessages(res?.data?.payload || false)
+      })
+      setNewNotification(false)
+    }
   }, [messagesContext])
 
 
@@ -21,7 +26,7 @@ const Notifications = () => {
     </Section>
     <section className="flex flex-col gap-y-[20px]">
       {(messages && messages.length) ? messages?.map((message) => {
-        return <NotificationCard message={message} />
+        return <NotificationCard message={message} key={message?._id} />
       }) : (
         <h1>No hay notificaciones</h1>
       )}

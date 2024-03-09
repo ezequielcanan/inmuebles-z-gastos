@@ -130,20 +130,23 @@ const EditSubpayment = () => {
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
-              <Input type="date" containerClassName={"!w-full"} defaultValue={moment.utc(subpayment?.date).format("YYYY-MM-DD")} register={{...register("date")}}>
+              <Input type="date" containerClassName={"!w-full"} defaultValue={moment.utc(subpayment?.date).format("YYYY-MM-DD")} register={{ ...register("date") }}>
                 <Label name={"date"} text={"Fecha:"} />
               </Input>
               {type == "a" ? (
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
                     <>
-                      <Input type="date" containerClassName={"!w-full"} defaultValue={moment.utc(subpayment?.retention?.date).format("YYYY-MM-DD")} register={{...register("retention.date")}}>
-                        <Label name={"date"} text={"Fecha de retencion:"} />
+                      <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.date") }} defaultValue={moment.utc(subpayment?.retention?.date).format("YYYY-MM-DD")}>
+                        <Label name={"date"} text={"Emision retencion:"} />
+                      </Input>
+                      <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.expirationDate") }} defaultValue={moment.utc(subpayment?.retention?.expirationDate).format("YYYY-MM-DD")}>
+                        <Label name={"expirationDate"} text={"Vencimiento retencion:"} />
                       </Input>
                       <Input register={{ ...register("retention.amount") }} defaultValue={subpayment?.retention?.amount} placeholder={"$"}>
                         <Label text={"Retencion:"} />
                       </Input>
-                      <Input register={{ ...register("retention.code") }}defaultValue={subpayment?.retention?.code} >
+                      <Input register={{ ...register("retention.code") }} defaultValue={subpayment?.retention?.code} >
                         <Label text={"Numero de retencion:"} />
                       </Input>
                       <SelectInput options={accounts} className={"!w-full"} defaultValue={subpayment?.retention?.account} register={{ ...register("retention.account") }}>
@@ -165,8 +168,8 @@ const EditSubpayment = () => {
                   <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers)}><FaPlus className="text-4xl cursor pointers" /></Button>
                 </>
               ) : <>
-                <SelectInput options={[{text:"Dolar", value: "dollar"}, {text: "Pesos", value: "pesos"}]} containerClassName={"!w-full flex justify-between"} className={"!w-full max-w-[300px]"} defaultValue={subpayment?.currency} register={{...register("currency")}}>
-                  <Label text={"Moneda"} name={"currency"}/>
+                <SelectInput options={[{ text: "Dolar", value: "dollar" }, { text: "Pesos", value: "pesos" }]} containerClassName={"!w-full flex justify-between"} className={"!w-full max-w-[300px]"} defaultValue={subpayment?.currency} register={{ ...register("currency") }}>
+                  <Label text={"Moneda"} name={"currency"} />
                 </SelectInput>
                 <Input containerClassName={"!w-full"} type="number" defaultValue={subpayment?.cashPaid} register={{ ...register("cashPaid") }}>
                   <Label name={"cashPaid"} text={"Efectivo pagado:"} />

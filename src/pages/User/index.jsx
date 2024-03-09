@@ -26,7 +26,7 @@ const User = () => {
   useEffect(() => {
     customAxios.get("/user").then(res => {
       const usersRes = res?.data?.payload
-      const users = [...usersRes.executive, ...usersRes.secretary, ...usersRes.user, ...usersRes.admin]
+      const users = [...usersRes.executive, ...usersRes.bank, ...usersRes.secretary, ...usersRes.user, ...usersRes.admin]
       setUsers([...users])
     }).catch(e => {
       setUsers("error")
@@ -47,6 +47,7 @@ const User = () => {
 
   const roles = {
     secretary: "Secretario",
+    bank: "Banco",
     executive: "Ejecutivo",
     user: "Usuario",
     unknow: "Desconocido",

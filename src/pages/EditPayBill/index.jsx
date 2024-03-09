@@ -109,7 +109,10 @@ const EditPayBill = () => {
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
               <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.date") }} defaultValue={moment.utc(bill?.retention?.date).format("YYYY-MM-DD")}>
-                <Label name={"date"} text={"Fecha de retencion:"} />
+                <Label name={"date"} text={"Emision retencion:"} />
+              </Input>
+              <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.expirationDate") }} defaultValue={moment.utc(bill?.retention?.expirationDate).format("YYYY-MM-DD")}>
+                <Label name={"expirationDate"} text={"Vencimiento retencion:"} />
               </Input>
               <Input register={{ ...register("retention.amount") }} placeholder={"$"} defaultValue={bill?.retention?.amount}>
                 <Label text={"Retencion:"} />

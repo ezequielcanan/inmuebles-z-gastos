@@ -81,7 +81,7 @@ const NewSubpayment = () => {
 
     data.checks = checksResult.payload.map((c, i) => c._id)
     data.transfers = transferResult.payload.map((t, i) => t._id)
-    data.materials = {material: data.materialsMaterial, amount: data.materialsAmount, date: data.materialsDate} 
+    data.materials = { material: data.materialsMaterial, amount: data.materialsAmount, date: data.materialsDate }
     const paymentResult = (await customAxios.post(`/white-payment/${pid}`, data)).data
 
     navigate(`/budgets/${payment?.budget?._id}/payments/${payment?._id}`)
@@ -101,21 +101,24 @@ const NewSubpayment = () => {
         <>
           <Section className={"gap-x-[40px] items-center"}>
             <Link to={`/budgets/${bid}/payments/${pid}`}>
-              <FaChevronLeft className="text-4xl"/>
+              <FaChevronLeft className="text-4xl" />
             </Link>
             <Title>Pago {type.toUpperCase()} - Certificado {payment?.paymentNumber} - Presupuesto {payment?.budget?.title || payment?.budget?.supplier?.name}</Title>
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
-              <Input type="date" containerClassName={"!w-full"} register={{...register("date")}}>
+              <Input type="date" containerClassName={"!w-full"} register={{ ...register("date") }}>
                 <Label name={"date"} text={"Fecha del pago:"} />
               </Input>
               {type == "a" ? (
                 <>
                   {payment?.white?.bills?.find((bill) => bill.concept == "certificate") &&
                     <>
-                      <Input type="date" containerClassName={"!w-full"} register={{...register("retention.date")}}>
-                        <Label name={"date"} text={"Fecha de retencion:"} />
+                      <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.date") }}>
+                        <Label name={"date"} text={"Emision retencion:"} />
+                      </Input>
+                      <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.expirationDate") }}>
+                        <Label name={"expirationDate"} text={"Vencimiento retencion:"} />
                       </Input>
                       <Input register={{ ...register("retention.amount") }} placeholder={"$"}>
                         <Label text={"Retencion:"} />
@@ -127,22 +130,22 @@ const NewSubpayment = () => {
                         <Label text={"Cuenta retencion:"} />
                       </SelectInput>
                     </>}
-                  <Input className={"!w-full max-w-[250px]"} placeholder={"TOTAL"} register={{...register("materialsAmount")}}>
-                    <Label text={"Materiales"} name={"materialsAmount"}/>
-                    <Input placeholder={"Material"} register={{...register("materialsMaterial")}} className={"max-w-[300px]"}/>
-                    <Input type="date" register={{...register("materialsDate")}}/>
+                  <Input className={"!w-full max-w-[250px]"} placeholder={"TOTAL"} register={{ ...register("materialsAmount") }}>
+                    <Label text={"Materiales"} name={"materialsAmount"} />
+                    <Input placeholder={"Material"} register={{ ...register("materialsMaterial") }} className={"max-w-[300px]"} />
+                    <Input type="date" register={{ ...register("materialsDate") }} />
                   </Input>
                   <h2 className="text-2xl md:text-4xl font-ubuntu">Cheques</h2>
-                  <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts}/>
+                  <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts} />
                   <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj()}><FaPlus className="text-4xl cursor pointers" /></Button>
-                  
+
                   <h2 className="text-2xl md:text-4xl font-ubuntu border-t-4 pt-4">Transferencias</h2>
-                  <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false}/>
+                  <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false} />
                   <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers, "transfer")}><FaPlus className="text-4xl cursor pointers" /></Button>
                 </>) : (
                 <>
-                  <SelectInput options={[{text:"Dolar", value: "dollar"}, {text: "Pesos", value: "pesos"}]} containerClassName={"!w-full flex justify-between"} className={"!w-full max-w-[300px]"} register={{...register("currency")}}>
-                    <Label text={"Moneda"} name={"currency"}/>
+                  <SelectInput options={[{ text: "Dolar", value: "dollar" }, { text: "Pesos", value: "pesos" }]} containerClassName={"!w-full flex justify-between"} className={"!w-full max-w-[300px]"} register={{ ...register("currency") }}>
+                    <Label text={"Moneda"} name={"currency"} />
                   </SelectInput>
                   <Input containerClassName={"!w-full"} type="number" register={{ ...register("cashPaid") }}>
                     <Label name={"cashPaid"} text={"Efectivo pagado:"} />

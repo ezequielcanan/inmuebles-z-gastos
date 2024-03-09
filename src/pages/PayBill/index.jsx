@@ -48,7 +48,8 @@ const PayBill = () => {
   const onSubmit = handleSubmit(async data => {
     data.date = data.date || moment()
     if (data?.retention) data.retention.detail = `Retencion N° ${data?.retention?.code}, factura ${bill?.code}, ${bill?.receiver?.name || ""} ${bill?.project?.title || ""}`
-    console.log(data)
+    console.log(accounts[0])
+    if (!data?.retention?.account) data.retention.account = accounts[0]?.value || ""
 
     const checksResult = (await customAxios.post("/check", checks)).data
     const transferResult = (await customAxios.post("/transfer", transfers)).data
@@ -92,14 +93,17 @@ const PayBill = () => {
         <>
           <Section className={"gap-x-[40px] items-center"}>
             <Link to={`/projects/${pid}/${sid}/${billId}`}>
-              <FaChevronLeft className="text-4xl"/>
+              <FaChevronLeft className="text-4xl" />
             </Link>
             <Title>Pago Factura {bill?.code}: {bill?.project?.title} - {bill?.receiver?.name}</Title>
           </Section>
           <Section style="form" className={"w-full"}>
             <Form onSubmit={onSubmit}>
-              <Input type="date" containerClassName={"!w-full"} register={{...register("retention.date")}}>
-                <Label name={"date"} text={"Fecha de retencion:"} />
+              <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.date") }}>
+                <Label name={"date"} text={"Emision retencion:"} />
+              </Input>
+              <Input type="date" containerClassName={"!w-full"} register={{ ...register("retention.expirationDate") }}>
+                <Label name={"expirationDate"} text={"Vencimiento retencion:"} />
               </Input>
               <Input register={{ ...register("retention.amount") }} placeholder={"$"}>
                 <Label text={"Retencion:"} />
@@ -111,11 +115,11 @@ const PayBill = () => {
                 <Label text={"Cuenta retencion:"} />
               </SelectInput>
               <h2 className="text-2xl md:text-4xl font-ubuntu">Cheques</h2>
-              <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts}/>
+              <PaymentMethodForm paymentMethod={checks} setPaymentMethod={setChecks} accounts={accounts} />
               <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj()}><FaPlus className="text-4xl cursor pointers" /></Button>
-              
+
               <h2 className="text-2xl md:text-4xl font-ubuntu border-t-4 pt-4">Transferencias</h2>
-              <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false}/>
+              <PaymentMethodForm paymentMethod={transfers} setPaymentMethod={setTransfers} accounts={accounts} placeholder="transferencia" expiration={false} />
               <Button style="icon" className={"bg-success hover:!bg-green-600"} type="button" onClick={() => addArrayObj(transfers, setTransfers, "transfer")}><FaPlus className="text-4xl cursor pointers" /></Button>
               <Button className={"text-black"} type="submit" style="submit">Enter</Button>
             </Form>

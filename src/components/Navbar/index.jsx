@@ -28,12 +28,12 @@ const Navbar = ({ user, setUser }) => {
         { text: "Facturas", to: "/bills", logo: HiOutlineDocument },
       ]
     },
-    {
+    /*{
       title: "Banco",
       data: [
         { text: "Cuentas", to: "/accounts", logo: MdAccountBalanceWallet },
       ]
-    }
+    }*/
   ]
 
   window.addEventListener("resize", e => setWidth(window.innerWidth))
@@ -59,7 +59,7 @@ const Navbar = ({ user, setUser }) => {
             </div>
           })}
           <ul className="hidden md:flex xl:flex-col gap-x-[10px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
-            <li className={`self-start`}>
+            {/*<li className={`self-start`}>
               <Link to={"/user"}>
                 <Button style="icon"><FaUser /></Button>
               </Link>
@@ -69,7 +69,7 @@ const Navbar = ({ user, setUser }) => {
                 <Button style="icon"><MdNotifications /></Button>
               </Link>
               {newNotification ? <span className="absolute w-[20px] h-[20px] top-0 right-0 rounded-full bg-gradient-to-tr from-red-400 to-red-600"/> : null}
-            </li>
+            </li>*/}
             {user ? <li className="self-start">
               <Link to={"/"} className="hidden md:flex items-center">
                 <Button style="icon" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /></Button>
@@ -93,14 +93,14 @@ const Navbar = ({ user, setUser }) => {
             </div>
           })}
           <ul className="flex flex-col gap-x-[30px] gap-y-[20px] rounded-md text-black px-4 py-6 text-2xl">
-            <li className={`xl:block w-full`}>
+            {/*<li className={`xl:block w-full`}>
               <Link to={"/user"}>
                 <Button style="icon"><FaUser /></Button>
               </Link>
             </li>
             <li className={`xl:block w-full`}>
               <Button style="icon"><MdNotifications /></Button>
-            </li>
+            </li>*/}
             {user ? <li className="pb-2">
               <Link to={"/"}>
                 <Button style="first" className={"text-sm"} onClick={() => (CookiesJs.set("jwt", ""), setUser(false))}><LuLogOut size={30} /> Cerrar Sesion</Button>

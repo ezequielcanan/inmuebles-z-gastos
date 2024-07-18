@@ -11,12 +11,15 @@ import BudgetCard from "../../components/BudgetCard"
 import Button from "../../components/Button"
 import BillCard from "../../components/BilllCard"
 import { FaFileDownload } from "react-icons/fa"
+import Breadcrumb from "../../components/Breadcrumb"
+import BackHeader from "../../components/BackHeader"
 
 const ProjectAndSupplierBudgets = () => {
   const { pid, sid } = useParams()
   const [project, setProject] = useState()
   const [budgets, setBudgets] = useState([])
   const [bills, setBills] = useState([])
+  const [supplier, setSupplier] = useState()
 
   useEffect(() => {
     customAxios.get(`/projects/${pid}`).then(res => {
@@ -38,14 +41,20 @@ const ProjectAndSupplierBudgets = () => {
     })
   }, [])
 
+  useEffect(() => {
+    customAxios.get(`/supplier/${sid}`).then(res => {
+      setSupplier(res?.data?.payload)
+    })
+  })
+
   return (
     <Main className={"flex flex-col pt-[150px] pb-[120px] gap-y-[70px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to={`/projects/${pid}`}><FaChevronLeft size={50} /></Link>
+      <BackHeader backpath={`/projects/${pid}`} condition={(project && budgets)} paths={[{name: "Proyectos", path: "/projects"}, {name: project?.title, path: `/projects/${pid}`}, {name: supplier?.name, path: `/projects/${pid}/${sid}`}]}/> 
       {project ? (
         project != "error" ? (
           <>
             <Section>
-              <Title>{project.title} - {budgets[0]?.supplier?.name}</Title>
+              <Title>{project.title} - {supplier?.name}</Title>
               <div className="flex gap-x-[25px] items-center">
                 <a href={`${import.meta.env.VITE_REACT_API_URL}/api/projects/excel/${pid}/${sid}`} download className="text-5xl text-success"><FaFileDownload/></a>
                 <Link to={`/projects/${pid}/${sid}/new-bill`}>

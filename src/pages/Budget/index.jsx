@@ -5,6 +5,7 @@ import { formatNumber } from "../../utils/numbers"
 import { FaChevronLeft, FaDownload, FaNoteSticky, FaFileArrowUp, FaFile, FaFileArrowDown, FaTrash } from "react-icons/fa6"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, A11y } from 'swiper/modules'
+import BackHeader from "../../components/BackHeader"
 import Main from "../../containers/Main"
 import customAxios from "../../config/axios.config"
 import Form from "../../components/Form"
@@ -135,9 +136,7 @@ const Budget = () => {
 
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
-      <Link to={"/budgets"}>
-        <FaChevronLeft className="text-4xl" />
-      </Link>
+      <BackHeader backpath={`/budgets`} condition={(budget)} paths={[{name: "Proyectos", path: "/projects"}, {name: budget?.project?.title, path: `/projects/${budget?.project?._id}`}, {name: budget?.supplier?.name, path: `/projects/${budget?.project?._id}/${budget?.supplier?._id}`}, {name: budget?.title, path: ``}]}/> 
       {(budget && budget != "error" && payments && projects && apartments) ? (
         <>
           <Section>

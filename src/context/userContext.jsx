@@ -23,7 +23,7 @@ export const UserContextProvider = ({ children }) => {
   
       const onNewMessage = () => {
         setNewNotification(true)
-        new Audio("/notification.wav").play()
+        //new Audio("/notification.wav").play()
       }
 
       const onMessages = data => {

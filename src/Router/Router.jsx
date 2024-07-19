@@ -77,10 +77,10 @@ const Router = () => {
             <Route path="/user" element={<User/>}/>
             <Route path="/notifications" element={<Notifications/>}/>
             <Route path="/bills" element={<Projects title="Facturas" path={`bills`}/>}/>
-            <Route path="/bills/:pid" element={<Project path="bills" title="Facturas de " backPath="/bills"/>}/>
+            <Route path="/bills/:pid" element={<Project path="bills" title="Facturas de " backPath="/bills" firstBackPath={{path: "/bills", name: "Facturas"}}/>}/>
             <Route path="/bills/:pid/:sid" element={<ProjectAndSupplierBills/>}/>
             <Route path="/payments" element={<Projects title="Certificados" path="payments"/>}/>
-            <Route path="/payments/:pid" element={<Project path="payments" title="Certificados de " backPath="/payments"/>}/>
+            <Route path="/payments/:pid" element={<Project path="payments" title="Certificados de " backPath="/payments" firstBackPath={{path: "/payments", name: "Certificados"}}/>}/>
             <Route path="/payments/:pid/:sid" element={<ProjectAndSupplierCertificates/>}/>
           </>
         )}

@@ -7,6 +7,7 @@ import customAxios from "../../config/axios.config"
 import { Fa0, FaChevronLeft } from "react-icons/fa6"
 import Section from "../../containers/Section"
 import BudgetCard from "../../components/BudgetCard"
+import BackHeader from "../../components/BackHeader"
 
 const Supplier = () => {
   const { sid } = useParams()
@@ -29,12 +30,12 @@ const Supplier = () => {
 
   return (
     <Main className={"flex flex-col pt-[150px] gap-y-[40px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to="/suppliers"><FaChevronLeft size={50}/></Link>
+      <BackHeader backpath={"/suppliers"} condition={(supplier)} paths={[{name: "Proveedores", path: "/suppliers"}, {name: supplier?.name, path: ""}]}/>
       {supplier ? (
         supplier != "error" ? (
           <>
             <Section>
-              <Title>{supplier.name}</Title>
+              <Title>{supplier?.name}</Title>
             </Section>
             <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
               {budgets?.length ? budgets?.map((budget) => {

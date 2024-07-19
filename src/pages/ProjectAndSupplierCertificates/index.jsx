@@ -12,6 +12,7 @@ import Button from "../../components/Button"
 import BillCard from "../../components/BilllCard"
 import { FaFileDownload } from "react-icons/fa"
 import PaymentCard from "../../components/PaymentCard"
+import BackHeader from "../../components/BackHeader"
 
 const ProjectAndSupplierCertificates = () => {
   const { pid, sid } = useParams()
@@ -47,7 +48,7 @@ const ProjectAndSupplierCertificates = () => {
 
   return (
     <Main className={"flex flex-col pt-[150px] pb-[120px] gap-y-[70px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to={`/payments/${pid}`}><FaChevronLeft size={50} /></Link>
+      <BackHeader backpath={`/payments/${pid}`}condition={(project && supplier)}  paths={[{name: "Certificados", path: "/payments"}, {name: project?.title, path: `/payments/${project?._id}`}, {name: supplier?.name, path: ``}]}/>
       {(project && payments && supplier) ? (
         project != "error" ? (
           <>

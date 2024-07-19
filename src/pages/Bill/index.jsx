@@ -17,6 +17,7 @@ import Label from "../../components/Label";
 import Form from "../../components/Form"
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import CheckCard from "../../components/CheckCard";
+import BackHeader from "../../components/BackHeader";
 import TransferCard from "../../components/TransferCard";
 
 const Bill = ({ path = true, movements = false }) => {
@@ -85,9 +86,7 @@ const Bill = ({ path = true, movements = false }) => {
     <Main className={"flex flex-col gap-y-[70px] py-[100px]"} paddings>
       {bill && bill != "error" ? (
         <>
-          <Link to={path ? `/budgets/${bid}/payments/${pid}` : `/projects/${pid}/${bill?.receiver?._id}`}>
-            <FaChevronLeft className="text-4xl" />
-          </Link>
+          <BackHeader backpath={!path ? `/bills/${pid}/${sid}` : `/budgets/${bid}/payments/${pid}`} condition={!path ? (bill) : (bill && payment)}  paths={!path ? [{name: "Facturas", path: "/bills"}, {name: bill?.project?.title, path: `/bills/${pid}`}, {name: bill?.receiver?.name, path: `/bills/${pid}/${sid}`}, {name: bill?.code, path: ``}] : [{name: "Proyectos", path: "/projects"}, {name: payment?.budget?.project?.title, path: `/projects/${pid}`}, {name: payment?.budget?.supplier?.name, path: `/projects/${pid}/${payment?.budget?.supplier?._id}`}, {name: payment?.budget?.title, path: `/budgets/${payment?.budget?._id}`}, {name: `Certificado ${payment?.paymentNumber}`, path: `/budgets/${bid}/payments/${pid}`}, {name: `Factura ${bill?.code}`, path: ``}]}/>
           <Section>
             <Title>Factura Código: {bill?.code}</Title>
             <div className="flex gap-x-[20px] items-center">

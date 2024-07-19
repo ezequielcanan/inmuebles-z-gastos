@@ -11,12 +11,23 @@ import BudgetCard from "../../components/BudgetCard"
 import Button from "../../components/Button"
 import BillCard from "../../components/BilllCard"
 import { FaFileDownload } from "react-icons/fa"
+import BackHeader from "../../components/BackHeader"
 
 
 const ProjectAndSupplierBills = () => {
   const { pid, sid } = useParams()
   const [project, setProject] = useState()
   const [bills, setBills] = useState([])
+  const [supplier, setSupplier] = useState(false)
+  
+
+  useEffect(() => {
+    customAxios.get(`/supplier/${sid}`).then(res => {
+      setSupplier(res?.data?.payload || "error")
+    }).catch(e => {
+      setSupplier("error")
+    })
+  }, [])
 
   useEffect(() => {
     customAxios.get(`/projects/${pid}`).then(res => {
@@ -34,12 +45,12 @@ const ProjectAndSupplierBills = () => {
 
   return (
     <Main className={"flex flex-col pt-[150px] pb-[120px] gap-y-[70px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <Link to={`/bills/${pid}`}><FaChevronLeft size={50} /></Link>
+      <BackHeader backpath={`/bills/${pid}`}condition={(project && supplier)}  paths={[{name: "Facturas", path: "/bills"}, {name: project?.title, path: `/bills/${project?._id}`}, {name: supplier?.name, path: ``}]}/>
       {project ? (
         project != "error" ? (
           <>
             <Section>
-              <Title>Facturas {project.title} - {bills[0]?.receiver?.name}</Title>
+              <Title>Facturas {project.title} - {supplier?.name}</Title>
               <div className="flex gap-x-[25px] items-center">
                 <Link to={`/projects/${pid}/${sid}/new-bill`}>
                   <Button>

@@ -28,6 +28,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import BillForm from "../../components/BillForm"
+import BackHeader from "../../components/BackHeader"
 
 const Payment = () => {
   const { pid, bid } = useParams()
@@ -123,9 +124,7 @@ const Payment = () => {
 
   return (
     <Main className={"flex flex-col pb-[100px] gap-y-[70px]"} paddings>
-      <Link to={`/budgets/${bid}`}>
-        <FaChevronLeft className="text-4xl"/>
-      </Link>
+      <BackHeader backpath={`/budgets/${bid}`} condition={(payment)}  paths={[{name: "Proyectos", path: "/projects"}, {name: payment?.budget?.project?.title, path: `/projects/${pid}`}, {name: payment?.budget?.supplier?.name, path: `/projects/${pid}/${payment?.budget?.supplier?._id}`}, {name: payment?.budget?.title, path: `/budgets/${payment?.budget?._id}`}, {name: `Certificado ${payment?.paymentNumber}`, path: ``}]}/>
       {(payment && payment != "error") ? (
         <>
           <Section>

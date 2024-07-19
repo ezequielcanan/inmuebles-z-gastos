@@ -11,7 +11,7 @@ import SupplierCard from "../../components/SupplierCard"
 import Subtitle from "../../components/Subtitle"
 import BackHeader from "../../components/BackHeader"
 
-const Project = ({ title = "", backPath = "/projects", path = "projects" }) => {
+const Project = ({ title = "", backPath = "/projects", firstBackPath = {path: "/projects", name: "Proyectos"}, path = "projects" }) => {
   const { pid } = useParams()
   const [project, setProject] = useState()
   const [suppliers, setSuppliers] = useState()
@@ -27,13 +27,13 @@ const Project = ({ title = "", backPath = "/projects", path = "projects" }) => {
 
   useEffect(() => {
     customAxios.get(`/supplier?pid=${pid}`).then(res => {
-      setSuppliers(res?.data?.payload)
+      setSuppliers(res?.data?.payload?.sort((a,b) => a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : (a?.name?.toLowerCase() < b?.name?.toLowerCase() ? -1 : 0)))
     })
   }, [])
 
   return (
     <Main className={"flex flex-col pt-[150px] gap-y-[50px] px-[10px] xl:pt-[100px] xl:pl-[370px] xl:pr-[100px]"}>
-      <BackHeader backpath={`/projects`} condition={(project)} paths={[{name: "Proyectos", path: "/projects"}, {name: project?.title, path: `/projects/${pid}`}]}/> 
+      <BackHeader backpath={backPath} condition={(project)} paths={[firstBackPath, {name: project?.title, path: `/projects/${pid}`}]}/> 
       {project ? (
         project != "error" ? (
           <>

@@ -136,7 +136,7 @@ const Budget = () => {
 
   return (
     <Main className={"flex flex-col gap-y-[70px] py-[120px]"} paddings>
-      <BackHeader backpath={`/budgets`} condition={(budget)} paths={[{name: "Proyectos", path: "/projects"}, {name: budget?.project?.title, path: `/projects/${budget?.project?._id}`}, {name: budget?.supplier?.name, path: `/projects/${budget?.project?._id}/${budget?.supplier?._id}`}, {name: budget?.title, path: ``}]}/> 
+      <BackHeader backpath={`/projects/${budget?.project?._id}/${budget?.supplier?._id}`} condition={(budget)} paths={[{name: "Proyectos", path: "/projects"}, {name: budget?.project?.title, path: `/projects/${budget?.project?._id}`}, {name: budget?.supplier?.name, path: `/projects/${budget?.project?._id}/${budget?.supplier?._id}`}, {name: budget?.title, path: ``}]}/> 
       {(budget && budget != "error" && payments && projects && apartments) ? (
         <>
           <Section>

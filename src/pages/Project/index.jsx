@@ -41,15 +41,15 @@ const Project = ({ title = "", backPath = "/projects", firstBackPath = {path: "/
               <Title>{title}{project.title}</Title>
             </Section>
             <section className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-              {suppliers?.length ? suppliers?.filter(s => s.budgets)?.map((supplier) => {
-                return <SupplierCard key={supplier?._id} title={supplier?.name} referrer={supplier?.referrer} budgets={supplier?.budgets} path={`/${path}/${pid}/${supplier?._id}`} id={supplier?._id} />
+              {suppliers?.length ? suppliers?.filter(s => (backPath != "/bills" ? s.budgets : s.bills))?.map((supplier) => {
+                return <SupplierCard key={supplier?._id} text={backPath != "/bills" ? "Presupuestos vigentes" : "Facturas"} title={supplier?.name} referrer={supplier?.referrer} budgets={backPath != "/bills" ? supplier?.budgets : supplier?.bills} path={`/${path}/${pid}/${supplier?._id}`} id={supplier?._id} />
               }) : <h2>No hay proveedores de este proyecto</h2>}
             </section>
             <section className={"flex flex-col gap-y-[30px] items-start"}>
-              {suppliers?.filter(s => !s.budgets) ? <Subtitle onClick={() => setShow(!show)} className={"text-xl cursor-pointer flex items-center gap-4"}>Otros proovedores <FaChevronDown /></Subtitle> : null}
+              {suppliers?.filter(s => (backPath != "/bills" ? !s.budgets : !s.bills)) ? <Subtitle onClick={() => setShow(!show)} className={"text-xl cursor-pointer flex items-center gap-4"}>Otros proovedores <FaChevronDown /></Subtitle> : null}
               <div className="grid gap-8 justify-items-center xl:justify-items-start md:grid-cols-3">
-                {(suppliers?.length && show) ? suppliers?.filter(s => !s.budgets)?.map((supplier) => {
-                  return <SupplierCard key={supplier?._id} title={supplier?.name} referrer={supplier?.referrer} budgets={supplier?.budgets} path={`/${path}/${pid}/${supplier?._id}`} id={supplier?._id} />
+                {(suppliers?.length && show) ? suppliers?.filter(s => (backPath != "/bills" ? !s.budgets : !s.bills))?.map((supplier) => {
+                  return <SupplierCard key={supplier?._id} text={backPath != "/bills" ? "Presupuestos vigentes" : "Facturas"} title={supplier?.name} referrer={supplier?.referrer} budgets={backPath != "/bills" ? supplier?.budgets : supplier?.bills} path={`/${path}/${pid}/${supplier?._id}`} id={supplier?._id} />
                 }) : null}
               </div>
             </section>

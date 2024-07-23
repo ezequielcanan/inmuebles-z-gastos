@@ -2,7 +2,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa"
 import { Link } from "react-router-dom"
 import customAxios from "../../config/axios.config"
 
-const SupplierCard = ({ title, referrer, setReload, budgets, id, path }) => {
+const SupplierCard = ({ title, referrer, setReload, budgets, text = "Presupuestos vigentes", id, path }) => {
   const onClickTrash = async (e) => {
     const result = (await customAxios.delete(`/supplier/${id}`)).data
     setReload((prev) => !prev)
@@ -15,7 +15,7 @@ const SupplierCard = ({ title, referrer, setReload, budgets, id, path }) => {
       </div>
       <div className="flex flex-col text-2xl">
         <p>Referente: {referrer}</p>
-        <p>Presupuestos vigentes: {budgets}</p>
+        <p>{text}: {budgets}</p>
       </div>
     </Link>
     <div className="flex gap-x-[10px] items-center absolute top-8 right-5">

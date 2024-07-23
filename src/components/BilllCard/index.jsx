@@ -11,10 +11,11 @@ const BillCard = ({bill, path, concept = true}) => {
       {concept && <p className="text-xl">Concepto: {bill?.concept == "certificate" ? "CERTIFICADO" : (bill.concept == "mcd" ? "MCD" : "MCP")}</p>}
       <p className="text-xl">Tipo: {bill?.bill?.type}</p>
       <p className="text-xl">Emisión: {moment.utc(bill?.bill?.emissionDate).format("DD-MM-YYYY")}</p>
-      <p className="text-xl">Monto: ${formatNumber(bill?.bill?.amount)}</p>
+      <p className="text-xl">Gravado: ${formatNumber(bill?.bill?.amount)}</p>
+      <p className="text-xl">No gravado: ${formatNumber(bill?.bill?.freeAmount)}</p>
       <p className="text-xl">IVA: %{bill?.bill?.iva}</p>
       <p className="text-xl">Impuestos: %{bill?.bill?.taxes}</p>
-      <p className="text-xl">Total: ${formatNumber(bill?.bill?.amount * (1 + (bill?.bill?.iva + bill?.bill?.taxes) / 100))}</p>
+      <p className="text-xl">Total: ${formatNumber(bill?.bill?.amount * (1 + (bill?.bill?.iva + bill?.bill?.taxes) / 100) + bill?.bill?.freeAmount)}</p>
     </div>
   </Link>
 }

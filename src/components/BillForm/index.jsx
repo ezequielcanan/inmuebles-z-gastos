@@ -34,7 +34,10 @@ const BillForm = ({onSubmit, setFile, file, register, billOptions, hasConcept=tr
       <Label name={"emissionDate"} text={"Fecha de emision:"} />
     </Input>
     <Input register={{ ...register("amount", { required: true }) }} type="number" containerClassName={"!w-full border-b-black"} className={"!w-full max-w-[350px]"}>
-      <Label name={"amount"}>Neto:</Label>
+      <Label name={"amount"}>Importe gravado:</Label>
+    </Input>
+    <Input register={{ ...register("freeAmount", { required: true }) }} type="number" containerClassName={"!w-full border-b-black"} className={"!w-full max-w-[350px]"}>
+      <Label name={"freeAmount"}>Importe no gravado:</Label>
     </Input>
     {hasConcept && (hasBillOptions ? (
       <SelectInput options={billOptions} optionClassName={"!text-white"} containerClassName={"!w-full border-b-black"} className={"!w-full"} register={{ ...register("concept") }}>

@@ -79,7 +79,9 @@ const Bill = ({ path = true, movements = false }) => {
     const iva = values["iva"]
     const taxes = values["taxes"]
     const amount = values["amount"]
-    return amount * (1 + (iva + taxes) / 100)
+    const freeAmount = values["freeAmount"]
+
+    return amount * (1 + (iva + taxes) / 100) + freeAmount
   }
 
   return (
@@ -118,7 +120,12 @@ const Bill = ({ path = true, movements = false }) => {
             <Form onSubmit={onSubmitUpdate} className={"flex items-start"}>
               <div className="flex gap-x-[20px] items-center bg-secondary p-4">
                 <Input className="!text-2xl" defaultValue={bill?.amount} type="number" disabled={!edit} register={{ ...register("amount") }} onChange={(e) => setValues({ ...values, amount: Number(e.target?.value) })}>
-                  <Label name={"amount"} text={"Neto:"} className={"!text-2xl"} />
+                  <Label name={"amount"} text={"Importe gravado:"} className={"!text-2xl"} />
+                </Input>
+              </div>
+              <div className="flex gap-x-[20px] items-center bg-secondary p-4">
+                <Input className="!text-2xl" defaultValue={bill?.freeAmount} type="number" disabled={!edit} register={{ ...register("freeAmount") }} onChange={(e) => setValues({ ...values, freeAmount: Number(e.target?.value) })}>
+                  <Label name={"amount"} text={"Importe no gravado:"} className={"!text-2xl"} />
                 </Input>
               </div>
               <div className="flex gap-x-[20px] items-center bg-secondary p-4">
@@ -133,7 +140,7 @@ const Bill = ({ path = true, movements = false }) => {
                 </Input>
                 <p className="text-2xl">{formatNumber(bill?.amount * bill?.taxes / 100)}</p>
               </div>
-              <p className="text-2xl font-bold">Total: ${formatNumber(!edit ? (bill?.amount * (1 + (bill?.iva + bill?.taxes) / 100)) : getTotalByInputs())}</p>
+              <p className="text-2xl font-bold">Total: ${formatNumber(!edit ? (bill?.amount * (1 + (bill?.iva + bill?.taxes) / 100) + bill?.freeAmount) : getTotalByInputs())}</p>
               {edit && <Button type="submit" className={"border-4 rounded border-black"} style="submit">Confirmar</Button>}
             </Form>
           </section>

@@ -116,7 +116,7 @@ const NewBudget = () => {
     paidApartments.splice(deleteIndex, 1)
     setPaidApartments([...paidApartments])
   }
-
+  
   return (
     <Main className={"grid items-center justify-center py-[40px] gap-y-[30px]"} paddings>
       <section>
@@ -177,6 +177,9 @@ const NewBudget = () => {
                   <Label name={"booking"} text={"Adelanto:"} />
                   <SelectInput register={{...register("bookingMethod")}} containerClassName={"!border-b-0"} options={[{text: "En porcentaje", value: "bookingPercentage"}, {text: "En dinero", value: "bookingMoney"}]}/>
                 </Input>
+                <Input register={{ ...register("bookingPercentage") }} type="number" containerClassName={"!w-full"} className={"md:!w-full"}>
+                  <Label name={"booking"} text={"Adelanto en A %:"} />
+                </Input>
                 <h2 className="text-2xl md:text-4xl font-ubuntu">Departamentos en pago</h2>
                 <div className="flex flex-col gap-y-[70px]">
                   {paidApartments.map((apartment, i) => {
@@ -192,6 +195,7 @@ const NewBudget = () => {
                       <div className="flex items-center justify-end w-full gap-x-4">
                         <Input placeholder={"Equivalente a:"} type="number" value={apartment?.total || ""} onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value), apartment.id)} className={"!w-full"} />
                         <Input placeholder={"Valor USD"} type="number" value={apartment?.dollar || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value), apartment.id)} />
+                        <Input placeholder={"A%"} type="number" value={apartment?.percentage || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("percentage", Number(e.currentTarget?.value), apartment.id)} />
                       </div>
                     </div>
                   })}

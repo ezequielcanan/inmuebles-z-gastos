@@ -108,7 +108,7 @@ const NewPayment = () => {
                 <Label name={"date"} text={"Fecha:"} />
               </Input>
               {budget?.paymentType == "advance" ? (
-                <Input type="number" className="!max-w-[300px]" register={{ ...register("percentageOfTotal", { required: true }) }}>
+                <Input type="number" className="!max-w-[300px]" step={0.00000001} register={{ ...register("percentageOfTotal", { required: true }) }}>
                   <Label name={"percentageOfTotal"} text={"Avance:"} />
                   <SelectInput register={{ ...register("advanceMethod") }} defaultValue="percentage"  options={[{ text: "%", value: "percentage" }, { text: "$", value: "money" }]} />
                 </Input>

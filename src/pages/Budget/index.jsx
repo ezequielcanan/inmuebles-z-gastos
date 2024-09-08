@@ -191,7 +191,7 @@ const Budget = () => {
           </section>
           <section className="flex flex-col items-start gap-y-[30px]">
             <div className="flex w-full justify-between items-center">
-              <Subtitle className={"w-full sm:w-auto"}>Pagos:</Subtitle>
+              <Subtitle className={"w-full sm:w-auto"}>Certificados</Subtitle>
               <div className="flex gap-x-8">
                 <a href={`${import.meta.env.VITE_REACT_API_URL}/api/budget/excel/${budget?._id}`} download className="text-3xl">
                   <Button className={"flex gap-x-4"}>A <FaDownload /></Button>

@@ -21,6 +21,7 @@ const NewBudget = () => {
   const [suppliers, setSuppliers] = useState(false)
   const [file, setFile] = useState(false)
   const [paymentType, setPaymentType] = useState("quotas")
+  const [bookingType, setBookingType] = useState("quotas")
   const [paidApartments, setPaidApartments] = useState([])
   const navigate = useNavigate()
 
@@ -47,6 +48,7 @@ const NewBudget = () => {
   const onSubmit = handleSubmit(async data => {
     data.paidApartments = paidApartments
     data.booking = data.bookingMethod == "bookingMoney" ? data.booking : data.booking * data.total / 100
+    data.bookingType = bookingType
     const result = (await customAxios.post("/budget", data, { headers: { "Content-Type": "application/json" } })).data
 
     data.folder = `projects/${result?.payload?.project}/budgets/${result?.payload?._id}`
@@ -129,7 +131,7 @@ const NewBudget = () => {
           <>
             <CiViewTable className="text-[100px] md:text-[180px]" />
             <Form className={"grid 2xl:grid-cols-2 gap-8"} onSubmit={onSubmit}>
-              <div className="flex flex-col gap-y-[20px]">
+              <div className="flex flex-col gap-y-[20px] overflow-hidden">
                 <Input register={{ ...register("title") }} className={"md:!w-[300px]"}>
                   <Label name={"title"} text={"Titulo:"} />
                 </Input>
@@ -177,9 +179,12 @@ const NewBudget = () => {
                   <Label name={"booking"} text={"Adelanto:"} />
                   <SelectInput register={{...register("bookingMethod")}} containerClassName={"!border-b-0"} options={[{text: "En porcentaje", value: "bookingPercentage"}, {text: "En dinero", value: "bookingMoney"}]}/>
                 </Input>
-                <Input register={{ ...register("bookingPercentage") }} type="number" containerClassName={"!w-full"} className={"md:!w-full"}>
-                  <Label name={"booking"} text={"Adelanto en A %:"} />
-                </Input>
+                <SelectInput register={{...register("bookingType")}} containerClassName={"!border-b-0"} options={[{text: "Cuotas", value: "quotas"}, {text: "Al total", value: "total"}]} onChange={(e) => setBookingType(e.currentTarget?.value)}>
+                  <Label name={"bookingType"} text={"Formato de adelanto:"} />
+                </SelectInput>
+                {bookingType != "total" && <Input register={{ ...register("bookingPercentage") }} type="number" containerClassName={"!w-full"} className={"md:!w-full"}>
+                  <Label name={"bookingPercentage"} text={"Adelanto en A %:"} />
+                </Input>}
                 <h2 className="text-2xl md:text-4xl font-ubuntu">Departamentos en pago</h2>
                 <div className="flex flex-col gap-y-[70px]">
                   {paidApartments.map((apartment, i) => {
@@ -195,7 +200,7 @@ const NewBudget = () => {
                       <div className="flex items-center justify-end w-full gap-x-4">
                         <Input placeholder={"Equivalente a:"} type="number" value={apartment?.total || ""} onChange={(e) => onChangePropertiesApartment("total", Number(e.currentTarget?.value), apartment.id)} className={"!w-full"} />
                         <Input placeholder={"Valor USD"} type="number" value={apartment?.dollar || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("dollar", Number(e.currentTarget?.value), apartment.id)} />
-                        <Input placeholder={"A%"} type="number" value={apartment?.percentage || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("percentage", Number(e.currentTarget?.value), apartment.id)} />
+                        {apartment?.subtractType == "quota" && <Input placeholder={"A%"} type="number" value={apartment?.percentage || ""} className={"!w-full"} onChange={(e) => onChangePropertiesApartment("percentage", Number(e.currentTarget?.value), apartment.id)} />}
                       </div>
                     </div>
                   })}

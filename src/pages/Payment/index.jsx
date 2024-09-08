@@ -149,7 +149,7 @@ const Payment = () => {
                 <Subtitle>Seccion A</Subtitle>
               </div>
               <div className="flex flex-col gap-y-[10px]">
-                <p className="text-2xl font-bold">SALDO A PAGAR: ${getSectionTotal("white", payment?.budget?.percentage)}</p>
+                {/*<p className="text-2xl font-bold">SALDO A PAGAR: ${getSectionTotal("white", payment?.budget?.percentage)}</p>*/}
                 <div className="flex w-full gap-8 justify-between items-center">
                   <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/a/new`}>
                     <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
@@ -181,7 +181,7 @@ const Payment = () => {
               </div>
               <div className="flex w-full gap-8 justify-between items-center">
                 <div className="flex flex-col w-full gap-y-[10px]">
-                  <p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("black", (100 - payment?.budget?.percentage))}</p>
+                  {/*<p className="text-2xl font-bold">TOTAL A PAGAR: ${getSectionTotal("black", (100 - payment?.budget?.percentage))}</p>*/}
                   <div className="flex w-full gap-8 justify-between items-center">
                     <Link to={`/budgets/${payment?.budget?._id}/payments/${payment?._id}/b/new`}>
                       <Button className={"bg-secondary !text-black after:bg-third border-4 border-black"}>
